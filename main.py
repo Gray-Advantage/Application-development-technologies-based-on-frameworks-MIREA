@@ -1,43 +1,46 @@
 """Сервис сокращения ссылок — консольное приложение.
 
-Точка запуска программы: загрузка данных, меню и вызов функций
-проекта в зависимости от выбора пользователя.
+Точка запуска программы: загрузка объектов из JSON-файлов, меню,
+выполнение пользовательских сценариев и сохранение изменённых данных
+перед завершением работы.
 """
 
 from datetime import date
 from pathlib import Path
 
-from clicks import (
+from models import Click, Link, User
+from models.clicks import (
     DEFAULT_SOURCE,
-    POPULAR_CLICKS,
-    count_by_field,
-    delete_link_clicks,
-    get_clicks_per_day,
+    count_clicks_by,
     get_total_stats,
-    is_popular,
-    iter_link_clicks,
     register_click,
+    show_link_stats,
+    show_total_stats,
 )
-from links import (
+from models.links import (
     CODE_RULES,
     DEFAULT_LIFETIME_DAYS,
     MAX_LIFETIME_DAYS,
     add_link,
-    build_short_url,
-    delete_link,
-    filter_active_links,
+    filter_available_links,
+    find_link_by_code,
     find_links,
-    get_days_left,
-    get_days_passed,
-    get_lifetime_status,
+    find_links_by_owner,
     get_link_status,
     is_code_free,
-    is_link_active,
-    is_valid_code,
     parse_code,
+    show_links,
     sort_links,
 )
-from storage import load_clicks, load_links, save_clicks, save_links
+from models.users import add_user, find_user_by_id, find_users, show_users
+from storage import (
+    load_clicks,
+    load_links,
+    load_users,
+    save_clicks,
+    save_links,
+    save_users,
+)
 from utils import (
     format_date,
     input_date,
@@ -47,20 +50,24 @@ from utils import (
 )
 
 DATA_DIR = Path(__file__).parent / "data"
+USERS_FILE = DATA_DIR / "users.json"
 LINKS_FILE = DATA_DIR / "links.json"
 CLICKS_FILE = DATA_DIR / "clicks.json"
-URL_PREVIEW_LENGTH = 45
 
 MENU_ITEMS = (
     ("1", "Показать ссылки"),
-    ("2", "Показать активные ссылки"),
+    ("2", "Показать доступные ссылки"),
     ("3", "Найти ссылку"),
     ("4", "Проверить короткий код"),
     ("5", "Сократить ссылку"),
     ("6", "Перейти по короткой ссылке"),
     ("7", "Статистика по ссылке"),
     ("8", "Общая статистика"),
-    ("9", "Удалить ссылку"),
+    ("9", "Отключить ссылку"),
+    ("10", "Показать пользователей"),
+    ("11", "Найти пользователя"),
+    ("12", "Добавить пользователя"),
+    ("13", "Ссылки пользователя"),
     ("0", "Выход"),
 )
 SORT_OPTIONS = (
@@ -70,78 +77,31 @@ SORT_OPTIONS = (
 )
 
 
-def show_links(links: list[dict], clicks: list[dict], today: date) -> None:
-    """Вывести ссылки в виде таблицы."""
-    if not links:
-        print("Ссылки не найдены")
-        return
-    counts = count_by_field(clicks, "code")
-    print(
-        f"{'Код':<14}{'Переходы':>9}  "
-        f"{'Действует до':<14}{'Статус':<9}Адрес"
-    )
-    for link in links:
-        url = link["url"]
-        if len(url) > URL_PREVIEW_LENGTH:
-            url = url[:URL_PREVIEW_LENGTH - 3] + "..."
-        status = "активна" if is_link_active(link, today) else "истекла"
-        print(
-            f"{link['code']:<14}{counts.get(link['code'], 0):>9}  "
-            f"{format_date(link['expires_at']):<14}{status:<9}{url}"
-        )
+def print_links(links: list[Link], clicks: list[Click], today: date) -> None:
+    """Вывести таблицу ссылок с количеством переходов по каждой."""
+    show_links(links, count_clicks_by(clicks, "link"), today)
 
 
-def show_link_card(link: dict, clicks: list[dict], today: date) -> None:
-    """Вывести подробные сведения и статистику по ссылке."""
-    sources = count_by_field(iter_link_clicks(clicks, link["code"]), "source")
-    clicks_count = sum(sources.values())
-    days_left = get_days_left(link, today)
-    clicks_per_day = get_clicks_per_day(
-        clicks_count, get_days_passed(link, today)
-    )
-
-    print(f"Исходный адрес: {link['url']}")
-    print(f"Короткий адрес: {build_short_url(link['code'])}")
-    print(f"Дата создания: {format_date(link['created_at'])}")
-    print(f"Действует до: {format_date(link['expires_at'])}")
-    print(f"Осталось дней: {max(days_left, 0)}")
-    print(f"Переходов: {clicks_count}")
-    print(f"Переходов в день: {clicks_per_day:.2f}")
-    print(get_lifetime_status(days_left))
-    if is_popular(clicks_count, days_left):
-        print(f"Ссылка популярна: не менее {POPULAR_CLICKS} переходов")
-    else:
-        print(f"Ссылка пока не набрала {POPULAR_CLICKS} переходов")
-
-    if sources:
-        print("Источники переходов:")
-        ranked_sources = sorted(
-            sources.items(), key=lambda item: item[1], reverse=True
-        )
-        for source, count in ranked_sources:
-            print(f"  {source}: {count}")
+def ask_link(links: list[Link]) -> Link | None:
+    """Запросить короткий код и найти ссылку; сообщить, если её нет."""
+    code = parse_code(input_text("Короткий код или короткий адрес: "))
+    link = find_link_by_code(links, code)
+    if link is None:
+        print(f"Ссылка с кодом «{code}» не найдена")
+    return link
 
 
-def show_total_stats(stats: dict) -> None:
-    """Вывести общую статистику сервиса."""
-    print(f"Всего ссылок: {stats['links']}")
-    print(f"Активных ссылок: {stats['active_links']}")
-    print(f"Всего переходов: {stats['clicks']}")
-    print(f"Уникальных источников: {stats['sources']}")
-    if not stats["top_links"]:
-        return
-    print("Самые популярные ссылки:")
-    for place, (code, count) in enumerate(stats["top_links"], start=1):
-        print(f"  {place}. {build_short_url(code)} — {count}")
-
-
-def ask_code() -> str:
-    """Запросить короткий код или полный короткий адрес."""
-    return parse_code(input_text("Короткий код или короткий адрес: "))
+def ask_user(users: list[User]) -> User | None:
+    """Запросить ID пользователя и найти его; сообщить, если его нет."""
+    user_id = input_int("ID пользователя: ", 1)
+    user = find_user_by_id(users, user_id)
+    if user is None:
+        print(f"Пользователь #{user_id} не найден")
+    return user
 
 
 def handle_show_links(
-    links: dict[str, dict], clicks: list[dict], today: date
+    links: list[Link], clicks: list[Click], today: date
 ) -> None:
     """Вывести все ссылки в порядке, выбранном пользователем."""
     for number, (_, title) in enumerate(SORT_OPTIONS, start=1):
@@ -150,28 +110,33 @@ def handle_show_links(
         "Порядок сортировки (Enter — 1): ", 1, len(SORT_OPTIONS), default=1
     )
     field = SORT_OPTIONS[choice - 1][0]
-    show_links(sort_links(links, field), clicks, today)
+    print_links(sort_links(links, field), clicks, today)
 
 
 def handle_find_links(
-    links: dict[str, dict], clicks: list[dict], today: date
+    links: list[Link], clicks: list[Click], today: date
 ) -> None:
     """Найти ссылки по части кода или адреса."""
     query = input_text("Часть кода или адреса: ")
-    show_links(find_links(links, query), clicks, today)
+    print_links(find_links(links, query), clicks, today)
 
 
-def handle_check_code(links: dict[str, dict]) -> None:
+def handle_check_code(links: list[Link]) -> None:
     """Проверить, свободен ли короткий код."""
-    code = ask_code()
-    if is_valid_code(code):
+    code = parse_code(input_text("Короткий код: "))
+    if Link.validate_code(code):
         print(get_link_status(is_code_free(links, code)))
     else:
         print(CODE_RULES)
 
 
-def handle_create_link(links: dict[str, dict], today: date) -> None:
-    """Создать короткую ссылку и сохранить ссылки в файл."""
+def create_new_link(
+    links: list[Link], users: list[User], today: date
+) -> bool:
+    """Сократить ссылку; вернуть True, если ссылка создана."""
+    owner = ask_user(users)
+    if owner is None:
+        return False
     url = input_text("Исходный адрес: ")
     code = input_text(
         "Свой короткий код (Enter — сгенерировать): ", allow_empty=True
@@ -182,48 +147,76 @@ def handle_create_link(links: dict[str, dict], today: date) -> None:
         MAX_LIFETIME_DAYS,
         default=DEFAULT_LIFETIME_DAYS,
     )
-    link = add_link(links, url, today, code, lifetime_days)
-    save_links(LINKS_FILE, links)
-    print(f"Короткая ссылка: {build_short_url(link['code'])}")
-    print(f"Действует до: {format_date(link['expires_at'])}")
+    link = add_link(links, owner, url, today, code, lifetime_days)
+    print(f"Создана ссылка: {link}")
+    print(f"Действует до: {format_date(link.expires_at)}")
+    return True
 
 
-def handle_open_link(
-    links: dict[str, dict], clicks: list[dict], today: date
-) -> None:
-    """Зарегистрировать переход по короткой ссылке и сохранить его."""
-    code = ask_code()
-    url = links[code]["url"]
+def open_link(links: list[Link], clicks: list[Click], today: date) -> bool:
+    """Перейти по короткой ссылке; вернуть True, если переход учтён."""
+    link = ask_link(links)
+    if link is None:
+        return False
     clicked_at = input_date(
         "Дата перехода ДД.ММ.ГГГГ (Enter — сегодня): ", today
     )
     source = input_text(
         f"Источник перехода (Enter — {DEFAULT_SOURCE}): ", allow_empty=True
     )
-    register_click(links, clicks, code, clicked_at, source)
-    save_clicks(CLICKS_FILE, clicks)
-    print(f"Переход выполнен: {url}")
+    register_click(clicks, link, clicked_at, source)
+    print(f"Переход выполнен: {link.url}")
+    return True
 
 
 def handle_link_stats(
-    links: dict[str, dict], clicks: list[dict], today: date
+    links: list[Link], clicks: list[Click], today: date
 ) -> None:
     """Вывести статистику по ссылке, выбранной пользователем."""
-    show_link_card(links[ask_code()], clicks, today)
+    link = ask_link(links)
+    if link is not None:
+        show_link_stats(link, clicks, today)
 
 
-def handle_delete_link(links: dict[str, dict], clicks: list[dict]) -> None:
-    """Удалить ссылку вместе с её переходами и сохранить данные."""
-    code = ask_code()
-    url = links[code]["url"]
-    if not input_yes_no(f"Удалить ссылку на {url}? (д/н): "):
-        print("Удаление отменено")
-        return
-    delete_link(links, code)
-    removed_count = delete_link_clicks(clicks, code)
-    save_links(LINKS_FILE, links)
-    save_clicks(CLICKS_FILE, clicks)
-    print(f"Ссылка удалена, удалено переходов: {removed_count}")
+def handle_deactivate_link(links: list[Link]) -> bool:
+    """Отключить ссылку после подтверждения; вернуть True, если отключена."""
+    link = ask_link(links)
+    if link is None:
+        return False
+    if not link.is_active:
+        print("Ссылка уже отключена")
+        return False
+    if not input_yes_no(f"Отключить ссылку {link}? (д/н): "):
+        print("Отключение отменено")
+        return False
+    link.deactivate()
+    print("Ссылка отключена, статистика переходов сохранена")
+    return True
+
+
+def handle_find_users(users: list[User]) -> None:
+    """Найти пользователей по части логина или адреса почты."""
+    query = input_text("Часть логина или адреса почты: ")
+    show_users(find_users(users, query))
+
+
+def create_new_user(users: list[User], today: date) -> bool:
+    """Добавить пользователя по введённым данным; вернуть True."""
+    username = input_text("Логин: ")
+    email = input_text("Электронная почта: ")
+    user = add_user(users, username, email, today)
+    print(f"Пользователь создан: {user}")
+    return True
+
+
+def handle_user_links(
+    links: list[Link], users: list[User], clicks: list[Click], today: date
+) -> None:
+    """Вывести ссылки пользователя, выбранного по ID."""
+    user = ask_user(users)
+    if user is not None:
+        print(f"Ссылки пользователя {user}:")
+        print_links(find_links_by_owner(links, user), clicks, today)
 
 
 def print_menu() -> None:
@@ -235,36 +228,65 @@ def print_menu() -> None:
 
 
 def run_action(
-    choice: str, links: dict[str, dict], clicks: list[dict]
-) -> None:
-    """Выполнить пункт меню, выбранный пользователем."""
+    choice: str,
+    links: list[Link],
+    users: list[User],
+    clicks: list[Click],
+) -> bool:
+    """Выполнить пункт меню; вернуть True, если данные изменились."""
     today = date.today()
+    data_changed = False
     if choice == "1":
         handle_show_links(links, clicks, today)
     elif choice == "2":
-        show_links(list(filter_active_links(links, today)), clicks, today)
+        print_links(list(filter_available_links(links, today)), clicks, today)
     elif choice == "3":
         handle_find_links(links, clicks, today)
     elif choice == "4":
         handle_check_code(links)
     elif choice == "5":
-        handle_create_link(links, today)
+        data_changed = create_new_link(links, users, today)
     elif choice == "6":
-        handle_open_link(links, clicks, today)
+        data_changed = open_link(links, clicks, today)
     elif choice == "7":
         handle_link_stats(links, clicks, today)
     elif choice == "8":
-        show_total_stats(get_total_stats(links, clicks, today))
+        show_total_stats(get_total_stats(links, users, clicks, today))
     elif choice == "9":
-        handle_delete_link(links, clicks)
+        data_changed = handle_deactivate_link(links)
+    elif choice == "10":
+        show_users(users)
+    elif choice == "11":
+        handle_find_users(users)
+    elif choice == "12":
+        data_changed = create_new_user(users, today)
+    elif choice == "13":
+        handle_user_links(links, users, clicks, today)
     else:
         print("Такого пункта меню нет")
+    return data_changed
+
+
+def save_data(
+    links: list[Link], users: list[User], clicks: list[Click]
+) -> None:
+    """Сохранить пользователей, ссылки и переходы в JSON-файлы."""
+    try:
+        save_users(USERS_FILE, users)
+        save_links(LINKS_FILE, links)
+        save_clicks(CLICKS_FILE, clicks)
+    except OSError as error:
+        print(f"Не удалось сохранить данные: {error}")
+    else:
+        print("Изменения сохранены")
 
 
 def main() -> None:
-    """Точка запуска приложения: загрузка данных и цикл меню."""
-    links = load_links(LINKS_FILE)
-    clicks = load_clicks(CLICKS_FILE)
+    """Точка запуска: загрузка объектов, цикл меню и сохранение данных."""
+    users = load_users(USERS_FILE)
+    links = load_links(LINKS_FILE, users)
+    clicks = load_clicks(CLICKS_FILE, links)
+    has_changes = False
     try:
         while True:
             print_menu()
@@ -272,17 +294,16 @@ def main() -> None:
             if choice == "0":
                 break
             try:
-                run_action(choice, links, clicks)
-            except KeyError as error:
-                print(f"Ссылка с кодом «{error.args[0]}» не найдена")
+                if run_action(choice, links, users, clicks):
+                    has_changes = True
             except ValueError as error:
                 print(f"Ошибка: {error}")
-            except OSError as error:
-                print(f"Не удалось сохранить данные: {error}")
     except (KeyboardInterrupt, EOFError):
         print()
         print("Работа прервана пользователем")
     finally:
+        if has_changes:
+            save_data(links, users, clicks)
         print("До свидания!")
 
 

@@ -1,5 +1,6 @@
 """Вспомогательные функции: безопасный ввод и форматирование."""
 
+from collections.abc import Iterable
 from datetime import date, datetime
 
 DATE_FORMAT = "%d.%m.%Y"
@@ -18,11 +19,12 @@ def input_text(prompt: str, allow_empty: bool = False) -> str:
 def input_int(
     prompt: str,
     min_value: int,
-    max_value: int,
+    max_value: int | None = None,
     default: int | None = None,
 ) -> int:
-    """Запросить целое число из диапазона от min_value до max_value.
+    """Запросить целое число не меньше min_value и не больше max_value.
 
+    Если max_value не задан, верхняя граница не проверяется.
     При пустом вводе возвращается default, если он задан.
     При некорректном вводе запрос повторяется.
     """
@@ -35,9 +37,12 @@ def input_int(
         except ValueError:
             print("Введите целое число")
             continue
-        if min_value <= value <= max_value:
+        if value < min_value:
+            print(f"Введите число не меньше {min_value}")
+        elif max_value is not None and value > max_value:
+            print(f"Введите число не больше {max_value}")
+        else:
             return value
-        print(f"Введите число от {min_value} до {max_value}")
 
 
 def input_date(prompt: str, default: date) -> date:
@@ -60,11 +65,11 @@ def input_yes_no(prompt: str) -> bool:
     return input(prompt).strip().lower() in YES_ANSWERS
 
 
-def format_date(iso_date: str) -> str:
-    """Преобразовать дату из формата ГГГГ-ММ-ДД в ДД.ММ.ГГГГ."""
-    return date.fromisoformat(iso_date).strftime(DATE_FORMAT)
+def format_date(value: date) -> str:
+    """Преобразовать дату в строку формата ДД.ММ.ГГГГ."""
+    return value.strftime(DATE_FORMAT)
 
 
-def get_next_id(records: list[dict]) -> int:
-    """Вернуть следующий свободный числовой идентификатор записи."""
-    return max((record["id"] for record in records), default=0) + 1
+def get_next_id(items: Iterable) -> int:
+    """Вернуть следующий свободный идентификатор объекта."""
+    return max((item.id for item in items), default=0) + 1

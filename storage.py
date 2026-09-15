@@ -1,7 +1,19 @@
-"""Функции сохранения и загрузки данных в JSON-файлах."""
+"""Функции сохранения и загрузки объектов в JSON-файлах.
+
+JSON используется для хранения данных, а объекты — для работы
+приложения. При загрузке записи превращаются в объекты, при сохранении
+объекты превращаются обратно в записи, а связанные объекты заменяются
+их идентификаторами.
+"""
 
 import json
+from collections.abc import Callable
+from datetime import date
 from pathlib import Path
+
+from models import Click, Link, User
+from models.links import find_link_by_code
+from models.users import find_user_by_id
 
 
 def read_json_list(path: Path) -> list[dict]:
@@ -36,27 +48,106 @@ def write_json_list(path: Path, records: list[dict]) -> None:
         json.dump(records, file, ensure_ascii=False, indent=4)
 
 
-def load_links(path: Path) -> dict[str, dict]:
-    """Загрузить ссылки и вернуть словарь, где ключ — короткий код."""
-    links = {}
+def load_objects(path: Path, build: Callable[[dict], object]) -> list:
+    """Прочитать записи из JSON-файла и превратить их в объекты.
+
+    Функция build создаёт объект из одной записи. Некорректные записи
+    пропускаются с сообщением, остальные данные загружаются.
+    """
+    objects = []
     for record in read_json_list(path):
         try:
-            links[record["code"]] = record
-        except (KeyError, TypeError):
-            print(f"В файле {path.name} пропущена некорректная запись")
-    return links
+            objects.append(build(record))
+        except (KeyError, TypeError, ValueError) as error:
+            print(f"В файле {path.name} пропущена запись: {error}")
+    return objects
 
 
-def save_links(path: Path, links: dict[str, dict]) -> None:
-    """Сохранить ссылки в JSON-файл в виде списка."""
-    write_json_list(path, list(links.values()))
+def link_from_data(data: dict, users: list[User]) -> Link:
+    """Создать ссылку из записи JSON, найдя владельца по owner_id."""
+    owner = find_user_by_id(users, data["owner_id"])
+    if owner is None:
+        raise ValueError(f"владелец #{data['owner_id']} не найден")
+    return Link(
+        code=data["code"],
+        url=data["url"],
+        owner=owner,
+        created_at=date.fromisoformat(data["created_at"]),
+        expires_at=date.fromisoformat(data["expires_at"]),
+        is_active=data["is_active"],
+    )
 
 
-def load_clicks(path: Path) -> list[dict]:
-    """Загрузить переходы из JSON-файла."""
-    return read_json_list(path)
+def click_from_data(data: dict, links: list[Link]) -> Click:
+    """Создать переход из записи JSON, найдя ссылку по короткому коду."""
+    link = find_link_by_code(links, data["code"])
+    if link is None:
+        raise ValueError(f"ссылка «{data['code']}» не найдена")
+    return Click(
+        click_id=data["id"],
+        link=link,
+        clicked_at=date.fromisoformat(data["clicked_at"]),
+        source=data["source"],
+    )
 
 
-def save_clicks(path: Path, clicks: list[dict]) -> None:
+def user_to_data(user: User) -> dict:
+    """Преобразовать пользователя в запись JSON."""
+    return {
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "registered_at": user.registered_at.isoformat(),
+    }
+
+
+def link_to_data(link: Link) -> dict:
+    """Преобразовать ссылку в запись JSON; владелец заменяется его id."""
+    return {
+        "code": link.code,
+        "url": link.url,
+        "owner_id": link.owner.id,
+        "created_at": link.created_at.isoformat(),
+        "expires_at": link.expires_at.isoformat(),
+        "is_active": link.is_active,
+    }
+
+
+def click_to_data(click: Click) -> dict:
+    """Преобразовать переход в запись JSON; ссылка заменяется её кодом."""
+    return {
+        "id": click.id,
+        "code": click.link.code,
+        "clicked_at": click.clicked_at.isoformat(),
+        "source": click.source,
+    }
+
+
+def load_users(path: Path) -> list[User]:
+    """Загрузить пользователей из JSON-файла."""
+    return load_objects(path, User.from_data)
+
+
+def load_links(path: Path, users: list[User]) -> list[Link]:
+    """Загрузить ссылки и связать их с объектами пользователей."""
+    return load_objects(path, lambda data: link_from_data(data, users))
+
+
+def load_clicks(path: Path, links: list[Link]) -> list[Click]:
+    """Загрузить переходы и связать их с объектами ссылок."""
+    return load_objects(path, lambda data: click_from_data(data, links))
+
+
+def save_users(path: Path, users: list[User]) -> None:
+    """Сохранить пользователей в JSON-файл."""
+    write_json_list(path, [user_to_data(user) for user in users])
+
+
+def save_links(path: Path, links: list[Link]) -> None:
+    """Сохранить ссылки в JSON-файл."""
+    write_json_list(path, [link_to_data(link) for link in links])
+
+
+def save_clicks(path: Path, clicks: list[Click]) -> None:
     """Сохранить переходы в JSON-файл."""
-    write_json_list(path, clicks)
+    write_json_list(path, [click_to_data(click) for click in clicks])

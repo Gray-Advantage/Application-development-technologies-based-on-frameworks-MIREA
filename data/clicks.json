@@ -61,66 +61,84 @@
     },
     {
         "id": 11,
+        "code": "promo-sept",
+        "clicked_at": "2026-09-06",
+        "source": "vk"
+    },
+    {
+        "id": 12,
+        "code": "promo-sept",
+        "clicked_at": "2026-09-07",
+        "source": "telegram"
+    },
+    {
+        "id": 13,
         "code": "mirea",
         "clicked_at": "2026-09-07",
         "source": "vk"
     },
     {
-        "id": 12,
+        "id": 14,
         "code": "5448c3",
         "clicked_at": "2026-09-08",
         "source": "email"
     },
     {
-        "id": 13,
+        "id": 15,
+        "code": "promo-sept",
+        "clicked_at": "2026-09-08",
+        "source": "vk"
+    },
+    {
+        "id": 16,
         "code": "5448c3",
         "clicked_at": "2026-09-09",
         "source": "telegram"
     },
     {
-        "id": 14,
+        "id": 17,
         "code": "mirea",
         "clicked_at": "2026-09-09",
         "source": "direct"
     },
     {
-        "id": 15,
+        "id": 18,
         "code": "mirea",
         "clicked_at": "2026-09-10",
         "source": "telegram"
     },
     {
-        "id": 16,
+        "id": 19,
         "code": "practicum",
         "clicked_at": "2026-09-10",
         "source": "vk"
     },
     {
-        "id": 17,
+        "id": 20,
         "code": "5448c3",
         "clicked_at": "2026-09-11",
         "source": "email"
     },
     {
-        "id": 18,
+        "id": 21,
         "code": "mirea",
         "clicked_at": "2026-09-12",
         "source": "vk"
     },
     {
-        "id": 19,
+        "id": 22,
         "code": "practicum",
         "clicked_at": "2026-09-13",
         "source": "telegram"
     },
     {
-        "id": 20,
+        "id": 23,
         "code": "mirea",
         "clicked_at": "2026-09-14",
         "source": "telegram"
     },
     {
-        "id": 21,
+        "id": 24,
         "code": "5448c3",
         "clicked_at": "2026-09-14",
         "source": "direct"

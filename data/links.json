@@ -2,25 +2,41 @@
     {
         "code": "py-docs",
         "url": "https://docs.python.org/3/tutorial/datastructures.html",
+        "owner_id": 1,
         "created_at": "2026-08-01",
-        "expires_at": "2026-08-31"
+        "expires_at": "2026-08-31",
+        "is_active": true
     },
     {
         "code": "mirea",
         "url": "https://www.mirea.ru/education/programmy-obucheniya/",
+        "owner_id": 2,
         "created_at": "2026-09-01",
-        "expires_at": "2026-10-01"
+        "expires_at": "2026-10-01",
+        "is_active": true
+    },
+    {
+        "code": "promo-sept",
+        "url": "https://sale.example.com/september",
+        "owner_id": 3,
+        "created_at": "2026-09-06",
+        "expires_at": "2026-10-06",
+        "is_active": false
     },
     {
         "code": "5448c3",
         "url": "https://online-edu.mirea.ru/course/view.php?id=4521",
+        "owner_id": 2,
         "created_at": "2026-09-08",
-        "expires_at": "2026-12-07"
+        "expires_at": "2026-12-07",
+        "is_active": true
     },
     {
         "code": "practicum",
         "url": "https://practicum.yandex.ru/backend-developer/",
+        "owner_id": 3,
         "created_at": "2026-09-10",
-        "expires_at": "2026-09-20"
+        "expires_at": "2026-09-20",
+        "is_active": true
     }
 ]
