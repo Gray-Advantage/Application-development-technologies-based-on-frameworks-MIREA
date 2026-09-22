@@ -6,5 +6,10 @@ respect-gitignore = false
 
 [tool.ruff.lint]
 preview = true
-select = ["E", "W", "F"]
-ignore = ["E226", "E241", "E242"]
+select = ["E", "W", "F", "Q"]
+ignore = ["E226", "E241", "E242", "Q004"]
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "double"
+multiline-quotes = "double"
+docstring-quotes = "double"
