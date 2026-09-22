@@ -79,7 +79,8 @@ def count_clicks_by(clicks: Iterable[Click], attribute: str) -> dict:
     По атрибуту link считается количество переходов по каждой ссылке,
     по атрибуту source — по каждому источнику.
     """
-    counts = {}
+    counts: dict[str, int] = {}
+
     for click in clicks:
         value = getattr(click, attribute)
         counts[value] = counts.get(value, 0) + 1

@@ -13,3 +13,8 @@ ignore = ["E226", "E241", "E242", "Q004"]
 inline-quotes = "double"
 multiline-quotes = "double"
 docstring-quotes = "double"
+
+[tool.mypy]
+python_version = "3.10"
+files = ["."]
+exclude = ["^venv/", "^\\.venv/"]
