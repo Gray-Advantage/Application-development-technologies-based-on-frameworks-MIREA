@@ -93,7 +93,9 @@ def ask_user(users: list[User]) -> User | None:
     return user
 
 
-def handle_show_links(links: list[Link], clicks: list[Click], today: date) -> None:
+def handle_show_links(
+    links: list[Link], clicks: list[Click], today: date
+) -> None:
     """Вывести все ссылки в порядке, выбранном пользователем."""
     for number, (_, title) in enumerate(SORT_OPTIONS, start=1):
         print(f"{number}. {title}")
@@ -104,7 +106,9 @@ def handle_show_links(links: list[Link], clicks: list[Click], today: date) -> No
     print_links(sort_links(links, field), clicks, today)
 
 
-def handle_find_links(links: list[Link], clicks: list[Click], today: date) -> None:
+def handle_find_links(
+    links: list[Link], clicks: list[Click], today: date
+) -> None:
     """Найти ссылки по части кода или адреса."""
     query = input_text("Часть кода или адреса: ")
     print_links(find_links(links, query), clicks, today)
@@ -125,7 +129,9 @@ def create_new_link(links: list[Link], users: list[User], today: date) -> bool:
     if owner is None:
         return False
     url = input_text("Исходный адрес: ")
-    code = input_text("Свой короткий код (Enter — сгенерировать): ", allow_empty=True)
+    code = input_text(
+        "Свой короткий код (Enter — сгенерировать): ", allow_empty=True
+    )
     lifetime_days = input_int(
         f"Срок действия в днях (Enter — {DEFAULT_LIFETIME_DAYS}): ",
         1,
@@ -143,7 +149,9 @@ def open_link(links: list[Link], clicks: list[Click], today: date) -> bool:
     link = ask_link(links)
     if link is None:
         return False
-    clicked_at = input_date("Дата перехода ДД.ММ.ГГГГ (Enter — сегодня): ", today)
+    clicked_at = input_date(
+        "Дата перехода ДД.ММ.ГГГГ (Enter — сегодня): ", today
+    )
     source = input_text(
         f"Источник перехода (Enter — {DEFAULT_SOURCE}): ", allow_empty=True
     )
@@ -152,7 +160,9 @@ def open_link(links: list[Link], clicks: list[Click], today: date) -> bool:
     return True
 
 
-def handle_link_stats(links: list[Link], clicks: list[Click], today: date) -> None:
+def handle_link_stats(
+    links: list[Link], clicks: list[Click], today: date
+) -> None:
     """Вывести статистику по ссылке, выбранной пользователем."""
     link = ask_link(links)
     if link is not None:
@@ -248,7 +258,9 @@ def run_action(
     return data_changed
 
 
-def save_data(links: list[Link], users: list[User], clicks: list[Click]) -> None:
+def save_data(
+    links: list[Link], users: list[User], clicks: list[Click]
+) -> None:
     """Сохранить пользователей, ссылки и переходы в JSON-файлы."""
     try:
         save_users(USERS_FILE, users)

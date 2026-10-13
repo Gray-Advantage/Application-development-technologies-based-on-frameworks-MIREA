@@ -9,8 +9,6 @@ def index(request: HttpRequest) -> HttpResponse:
     return render(request, "homepage/index.html")
 
 
-def page_not_found(
-    request: HttpRequest, exception: Exception
-) -> HttpResponse:
+def page_not_found(request: HttpRequest, exception: Exception) -> HttpResponse:
     """Собственная страница ошибки 404 для всех приложений проекта."""
     return render(request, "homepage/not_found.html", status=404)

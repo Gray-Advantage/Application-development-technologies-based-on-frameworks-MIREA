@@ -63,7 +63,9 @@ def add_user(
     """
     username = username.strip()
     email = email.strip().lower()
-    has_valid_length = MIN_USERNAME_LENGTH <= len(username) <= MAX_USERNAME_LENGTH
+    has_valid_length = (
+        MIN_USERNAME_LENGTH <= len(username) <= MAX_USERNAME_LENGTH
+    )
     if not has_valid_length:
         raise ValueError(
             f"Логин должен содержать от {MIN_USERNAME_LENGTH} "

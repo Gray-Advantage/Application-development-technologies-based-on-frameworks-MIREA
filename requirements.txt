@@ -1,5 +1,6 @@
 Django==5.2.*
 pytest>=8.0
+black>=26.10
 flake8>=7.0
 flake8-quotes>=3.4
 ruff>=0.16

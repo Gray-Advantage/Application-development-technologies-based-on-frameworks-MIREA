@@ -52,7 +52,9 @@ def register_click(
     if link.days_passed(clicked_at) < 0:
         raise ValueError("Дата перехода раньше даты создания ссылки")
     if not link.is_available(clicked_at):
-        raise ValueError(f"Переход невозможен: ссылка {link.get_state(clicked_at)}")
+        raise ValueError(
+            f"Переход невозможен: ссылка {link.get_state(clicked_at)}"
+        )
 
     click = Click(
         get_next_id(clicks),
@@ -154,7 +156,9 @@ def show_link_stats(link: Link, clicks: list[Click], today: date) -> None:
 
     print("Источники переходов:")
     sources = count_clicks_by(link_clicks, "source")
-    ranked_sources = sorted(sources.items(), key=lambda item: item[1], reverse=True)
+    ranked_sources = sorted(
+        sources.items(), key=lambda item: item[1], reverse=True
+    )
     for source, count in ranked_sources:
         print(f"  {source}: {count}")
     print("Последние переходы:")
