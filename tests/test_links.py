@@ -16,9 +16,7 @@ URL = "https://www.mirea.ru/education/programmy-obucheniya/"
 
 
 def make_user(user_id=1, username="anna"):
-    return User(
-        user_id, username, f"{username}@example.com", date(2026, 9, 1)
-    )
+    return User(user_id, username, f"{username}@example.com", date(2026, 9, 1))
 
 
 def test_link_creation():

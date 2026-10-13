@@ -138,6 +138,20 @@ def load_clicks(path: Path, links: list[Link]) -> list[Click]:
     return load_objects(path, lambda data: click_from_data(data, links))
 
 
+def load_all(
+    data_dir: Path,
+) -> tuple[list[User], list[Link], list[Click]]:
+    """Загрузить пользователей, ссылки и переходы из каталога data_dir.
+
+    Связи восстанавливаются по порядку: ссылки получают объекты
+    владельцев, переходы — объекты ссылок.
+    """
+    users = load_users(data_dir / "users.json")
+    links = load_links(data_dir / "links.json", users)
+    clicks = load_clicks(data_dir / "clicks.json", links)
+    return users, links, clicks
+
+
 def save_users(path: Path, users: list[User]) -> None:
     """Сохранить пользователей в JSON-файл."""
     write_json_list(path, [user_to_data(user) for user in users])

@@ -3,6 +3,7 @@ from datetime import date
 from models import Click, Link, User
 from models.clicks import (
     count_clicks_by,
+    find_click_by_id,
     get_clicks_per_day,
     get_top_links,
     iter_link_clicks,
@@ -49,6 +50,17 @@ def test_iter_link_clicks_returns_only_link_clicks():
     register_click(clicks, mirea, date(2026, 9, 2))
     register_click(clicks, docs, date(2026, 9, 2))
     assert [click.link for click in iter_link_clicks(clicks, mirea)] == [mirea]
+
+
+def test_find_click_by_id():
+    link = make_link()
+    clicks = []
+    click = register_click(clicks, link, date(2026, 9, 2))
+    assert find_click_by_id(clicks, click.id) is click
+
+
+def test_find_click_by_unknown_id():
+    assert find_click_by_id([], 99) is None
 
 
 def test_clicks_per_day_for_new_link():

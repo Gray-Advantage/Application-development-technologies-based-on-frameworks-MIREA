@@ -1,5 +1,5 @@
 [tool.ruff]
-line-length = 79
+line-length = 88
 target-version = "py310"
 exclude = [".git", "__pycache__", ".pytest_cache", "venv", ".venv"]
 respect-gitignore = false
@@ -7,7 +7,7 @@ respect-gitignore = false
 [tool.ruff.lint]
 preview = true
 select = ["E", "W", "F", "Q"]
-ignore = ["E226", "E241", "E242", "Q004"]
+ignore = ["E203", "E226", "E241", "E242", "Q004"]
 
 [tool.ruff.lint.flake8-quotes]
 inline-quotes = "double"
@@ -18,3 +18,7 @@ docstring-quotes = "double"
 python_version = "3.10"
 files = ["."]
 exclude = ["^venv/", "^\\.venv/"]
+
+[[tool.mypy.overrides]]
+module = ["django.*"]
+ignore_missing_imports = true

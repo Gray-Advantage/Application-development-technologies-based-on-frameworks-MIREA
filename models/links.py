@@ -83,10 +83,7 @@ class Link:
 
     def __str__(self) -> str:
         """Вернуть строковое представление ссылки."""
-        return (
-            f"{self.short_url} → {self.url} "
-            f"(владелец: {self.owner.username})"
-        )
+        return f"{self.short_url} → {self.url} " f"(владелец: {self.owner.username})"
 
     @staticmethod
     def validate_url(url: str) -> bool:
@@ -159,13 +156,10 @@ def add_link(
     code = code.strip()
     if not Link.validate_url(url):
         raise ValueError(
-            "Адрес должен начинаться с http:// или https:// "
-            "и содержать доменное имя"
+            "Адрес должен начинаться с http:// или https:// " "и содержать доменное имя"
         )
     if lifetime_days < 1 or lifetime_days > MAX_LIFETIME_DAYS:
-        raise ValueError(
-            f"Срок действия должен быть от 1 до {MAX_LIFETIME_DAYS} дней"
-        )
+        raise ValueError(f"Срок действия должен быть от 1 до {MAX_LIFETIME_DAYS} дней")
     if not code:
         code = generate_code(links, url)
     elif not Link.validate_code(code):
@@ -183,7 +177,7 @@ def parse_code(value: str) -> str:
     """Получить короткий код из кода или полного короткого адреса."""
     value = value.strip()
     if value.startswith(SHORT_URL_PREFIX):
-        return value[len(SHORT_URL_PREFIX):]
+        return value[len(SHORT_URL_PREFIX) :]
     return value
 
 
@@ -205,9 +199,7 @@ def find_links_by_owner(links: list[Link], owner: User) -> list[Link]:
     return [link for link in links if link.owner is owner]
 
 
-def filter_available_links(
-    links: list[Link], today: date
-) -> Iterator[Link]:
+def filter_available_links(links: list[Link], today: date) -> Iterator[Link]:
     """Выдавать по одной ссылки, по которым можно перейти."""
     for link in links:
         if link.is_available(today):
@@ -221,9 +213,7 @@ def sort_links(links: list[Link], field: str = "created_at") -> list[Link]:
     return sorted(links, key=lambda link: getattr(link, field))
 
 
-def show_links(
-    links: list[Link], clicks_count: dict[Link, int], today: date
-) -> None:
+def show_links(links: list[Link], clicks_count: dict[Link, int], today: date) -> None:
     """Вывести ссылки в виде таблицы.
 
     clicks_count содержит количество переходов по каждой ссылке.
@@ -238,7 +228,7 @@ def show_links(
     for link in links:
         url = link.url
         if len(url) > URL_PREVIEW_LENGTH:
-            url = url[:URL_PREVIEW_LENGTH - 3] + "..."
+            url = url[: URL_PREVIEW_LENGTH - 3] + "..."
         print(
             f"{link.code:<14}{clicks_count.get(link, 0):>9}  "
             f"{format_date(link.expires_at):<14}"

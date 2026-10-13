@@ -11,6 +11,9 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 
+# База данных разработки Django
+db.sqlite3
+
 # Настройки IDE
 .idea/
 .vscode/
