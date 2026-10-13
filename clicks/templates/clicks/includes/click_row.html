@@ -1,0 +1,17 @@
+<li class="list-group-item click-row">
+    <a href="{% url 'clicks:detail' row.click.id %}">
+        Переход №{{ row.click.id }}
+    </a>
+
+    от {{ row.click.clicked_at|date:"d.m.Y" }} по ссылке
+
+    <a href="{% url 'links:detail' row.click.link.code %}">
+        {{ row.click.link.short_url }}
+    </a>
+
+    <span class="badge bg-info click-source">
+        {{ row.click.source|default:"direct" }}
+    </span>
+
+    {% include "links/includes/link_status.html" with state=row.state available=row.available %}
+</li>

@@ -4,7 +4,9 @@ from django.urls import path
 
 from . import views
 
+app_name = "clicks"
+
 urlpatterns = [
-    path("", views.clicks, name="clicks"),
-    path("<int:click_id>/", views.click_detail, name="click_detail"),
+    path("", views.clicks, name="list"),
+    path("<int:click_id>/", views.click_detail, name="detail"),
 ]

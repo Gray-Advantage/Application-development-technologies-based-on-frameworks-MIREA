@@ -1,0 +1,34 @@
+/* Собственные стили проекта: оформление поверх Bootstrap. */
+
+.service-logo {
+    width: 96px;
+    height: auto;
+    margin: 1rem 0;
+}
+
+.service-nav {
+    border-bottom: 1px solid #dee2e6;
+    margin-bottom: 1.5rem;
+}
+
+.link-card {
+    border-left: 4px solid #0d6efd;
+}
+
+.link-status {
+    font-weight: 600;
+}
+
+.link-status-closed {
+    opacity: 0.85;
+}
+
+.click-row .click-source {
+    text-transform: uppercase;
+}
+
+.service-footer {
+    color: #6c757d;
+    border-top: 1px solid #dee2e6;
+    padding-top: 0.75rem;
+}

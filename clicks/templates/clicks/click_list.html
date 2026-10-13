@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Переходы – Сервис сокращения ссылок{% endblock %}
+
+{% block content %}
+    <h1>Переходы по ссылкам</h1>
+
+    <p>Всего переходов: {{ rows|length }}</p>
+
+    <ul class="list-group">
+        {% for row in rows %}
+            {% include "clicks/includes/click_row.html" %}
+        {% empty %}
+            <li class="list-group-item">Переходы не найдены.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

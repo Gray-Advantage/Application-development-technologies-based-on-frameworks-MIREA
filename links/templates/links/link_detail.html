@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if card %}
+        {{ card.link.code }} – Сервис сокращения ссылок
+    {% else %}
+        Ссылка не найдена – Сервис сокращения ссылок
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if card %}
+        <div class="card link-card">
+            <div class="card-body">
+                <h1 class="card-title h4">
+                    {{ card.link.short_url }}
+
+                    {% include "links/includes/link_status.html" with state=card.state available=card.available %}
+                </h1>
+
+                <p class="card-text">
+                    <strong>Исходный адрес:</strong>
+                    <a href="{{ card.link.url }}">{{ card.link.url }}</a>
+                </p>
+
+                <p class="card-text">
+                    <strong>Короткий код:</strong> {{ card.link.code }}
+                </p>
+
+                <p class="card-text">
+                    <strong>Владелец:</strong>
+                    {{ card.link.owner.username }}
+                    ({{ card.link.owner.email }})
+                </p>
+
+                <p class="card-text">
+                    <strong>Создана:</strong>
+                    {{ card.link.created_at|date:"d.m.Y" }},
+                    <strong>действует до:</strong>
+                    {{ card.link.expires_at|date:"d.m.Y" }}
+
+                    {% if card.available %}
+                        (осталось дней: {{ card.days_left }})
+                    {% endif %}
+                </p>
+
+                <p class="card-text">
+                    <strong>Переходов:</strong> {{ card.clicks }},
+                    в день: {{ card.per_day|floatformat:2 }}
+
+                    {% if card.popular %}
+                        <span class="badge bg-warning text-dark">
+                            популярная
+                        </span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    {% else %}
+        <h1 class="text-danger">Ссылка не найдена</h1>
+
+        <p>Ссылки с указанным коротким кодом в сервисе нет.</p>
+    {% endif %}
+
+    <a href="{% url 'links:list' %}" class="btn btn-outline-secondary mt-3">
+        ← к списку ссылок
+    </a>
+{% endblock %}

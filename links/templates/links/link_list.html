@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Ссылки – Сервис сокращения ссылок{% endblock %}
+
+{% block content %}
+    <h1>Короткие ссылки</h1>
+
+    <p>Всего ссылок: {{ cards|length }}</p>
+
+    {% for card in cards %}
+        {% include "links/includes/link_card.html" %}
+    {% empty %}
+        <p>Ссылки не найдены.</p>
+    {% endfor %}
+{% endblock %}

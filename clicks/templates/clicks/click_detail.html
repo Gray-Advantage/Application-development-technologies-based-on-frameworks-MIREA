@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if row %}
+        Переход №{{ row.click.id }} – Сервис сокращения ссылок
+    {% else %}
+        Переход не найден – Сервис сокращения ссылок
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if row %}
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title h4">
+                    Переход №{{ row.click.id }}
+                </h1>
+
+                <p class="card-text">
+                    <strong>Короткая ссылка:</strong>
+                    <a href="{% url 'links:detail' row.click.link.code %}">
+                        {{ row.click.link.short_url }}
+                    </a>
+
+                    {% include "links/includes/link_status.html" with state=row.state available=row.available %}
+                </p>
+
+                <p class="card-text">
+                    <strong>Исходный адрес:</strong>
+                    {{ row.click.link.url }}
+                </p>
+
+                <p class="card-text">
+                    <strong>Владелец ссылки:</strong>
+                    {{ row.click.link.owner.username }}
+                </p>
+
+                <p class="card-text">
+                    <strong>Дата перехода:</strong>
+                    {{ row.click.clicked_at|date:"d.m.Y" }}
+                </p>
+
+                <p class="card-text">
+                    <strong>Источник:</strong>
+                    <span class="badge bg-info click-source">
+                        {{ row.click.source|default:"direct" }}
+                    </span>
+                </p>
+            </div>
+        </div>
+    {% else %}
+        <h1 class="text-danger">Переход не найден</h1>
+
+        <p>Перехода с указанным идентификатором в сервисе нет.</p>
+    {% endif %}
+
+    <a href="{% url 'clicks:list' %}" class="btn btn-outline-secondary mt-3">
+        ← к списку переходов
+    </a>
+{% endblock %}

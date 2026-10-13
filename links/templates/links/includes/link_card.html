@@ -1,0 +1,21 @@
+<article class="card link-card mb-3">
+    <div class="card-body">
+        <h2 class="card-title h5">
+            <a href="{% url 'links:detail' card.link.code %}">
+                {{ card.link.short_url }}
+            </a>
+
+            {% include "links/includes/link_status.html" with state=card.state available=card.available %}
+        </h2>
+
+        <p class="card-text">
+            {{ card.link.url|truncatechars:40 }}
+        </p>
+
+        <p class="card-text text-muted">
+            Владелец: {{ card.link.owner.username|default:"не указан" }},
+            переходов: {{ card.clicks }},
+            действует до {{ card.link.expires_at|date:"d.m.Y" }}
+        </p>
+    </div>
+</article>

@@ -1,0 +1,9 @@
+{% if available %}
+    <span class="badge bg-success link-status link-status-active">
+        {{ state }}
+    </span>
+{% else %}
+    <span class="badge bg-secondary link-status link-status-closed">
+        {{ state }}
+    </span>
+{% endif %}

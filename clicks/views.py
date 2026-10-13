@@ -1,32 +1,33 @@
 """Представления страниц переходов по коротким ссылкам."""
 
+from datetime import date
+
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse
+from django.shortcuts import render
 
-from homepage.views import page
-from models.clicks import find_click_by_id
+from models.clicks import Click, find_click_by_id
 from storage import load_all
+
+
+def build_click_row(click: Click, today: date) -> dict:
+    """Подготовить данные перехода и состояние его ссылки для шаблона."""
+    return {
+        "click": click,
+        "state": click.link.get_state(today),
+        "available": click.link.is_available(today),
+    }
 
 
 def clicks(request: HttpRequest) -> HttpResponse:
     """Страница /clicks/: список переходов из data/clicks.json."""
     _, _, clicks_list = load_all(settings.DATA_DIR)
+    today = date.today()
 
-    items = ""
-    for click in clicks_list:
-        items += f"""
-        <li class="list-group-item">
-            <a href="/clicks/{click.id}/">Переход №{click.id}</a>
-            {click.clicked_at} — {click.link.short_url}
-            <span class="badge bg-info">{click.source}</span>
-        </li>
-        """
-
-    content = f"""
-    <h1>Переходы</h1>
-    <ul class="list-group">{items}</ul>
-    """
-    return HttpResponse(page("Переходы", content))
+    context = {
+        "rows": [build_click_row(click, today) for click in clicks_list],
+    }
+    return render(request, "clicks/click_list.html", context)
 
 
 def click_detail(request: HttpRequest, click_id: int) -> HttpResponse:
@@ -34,46 +35,14 @@ def click_detail(request: HttpRequest, click_id: int) -> HttpResponse:
     _, _, clicks_list = load_all(settings.DATA_DIR)
     click = find_click_by_id(clicks_list, click_id)
 
-    if click is None:
-        content = """
-        <h1 class="text-danger">Переход не найден</h1>
-        <a href="/clicks/" class="btn btn-outline-secondary">
-            ← к списку переходов
-        </a>
-        """
-        return HttpResponse(
-            page("Переход не найден", content),
-            status=404,
-        )
+    row = None
+    if click is not None:
+        row = build_click_row(click, date.today())
 
-    content = f"""
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Переход №{click.id}</h5>
-            <p class="card-text">
-                <strong>Короткая ссылка:</strong>
-                <a href="/links/{click.link.code}/">
-                    {click.link.short_url}
-                </a>
-            </p>
-            <p class="card-text">
-                <strong>Исходный адрес:</strong> {click.link.url}
-            </p>
-            <p class="card-text">
-                <strong>Владелец ссылки:</strong>
-                {click.link.owner.username}
-            </p>
-            <p class="card-text">
-                <strong>Дата перехода:</strong> {click.clicked_at}
-            </p>
-            <p class="card-text">
-                <strong>Источник:</strong>
-                <span class="badge bg-info">{click.source}</span>
-            </p>
-            <a href="/clicks/" class="btn btn-outline-secondary">
-                ← к списку переходов
-            </a>
-        </div>
-    </div>
-    """
-    return HttpResponse(page(f"Переход №{click.id}", content), status=200)
+    context = {"row": row}
+    return render(
+        request,
+        "clicks/click_detail.html",
+        context,
+        status=404 if click is None else 200,
+    )

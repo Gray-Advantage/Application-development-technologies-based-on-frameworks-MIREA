@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Главная – Сервис сокращения ссылок{% endblock %}
+
+{% block content %}
+    <h1 class="display-4">Сервис сокращения ссылок</h1>
+
+    <p class="lead">
+        Короткие ссылки, срок их действия и статистика переходов.
+    </p>
+
+    <p>Основные разделы:</p>
+
+    <a href="{% url 'links:list' %}" class="btn btn-primary me-2">
+        Ссылки
+    </a>
+
+    <a href="{% url 'clicks:list' %}" class="btn btn-secondary">
+        Переходы
+    </a>
+{% endblock %}
