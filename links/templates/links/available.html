@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Поиск доступных ссылок{% endblock %}
+{% block content %}
+<h1>Доступные ссылки на дату</h1>
+<form method="get" class="mb-3">
+  <label>Дата <input type="date" name="date" value="{{ date }}"></label>
+  <label>Код или URL <input name="q" value="{{ q }}"></label>
+  <button class="btn btn-primary">Найти</button>
+</form>
+{% if error %}<p class="text-danger">{{ error }}</p>{% endif %}
+{% for card in cards %}
+  {% include "links/includes/link_card.html" %}
+{% empty %}<p>Ссылки не найдены.</p>{% endfor %}
+{% endblock %}

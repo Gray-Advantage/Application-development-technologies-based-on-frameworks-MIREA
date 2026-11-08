@@ -2,12 +2,11 @@
 
 from datetime import date
 
-from django.conf import settings
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from models.clicks import Click, find_click_by_id
-from storage import load_all
+from db.repository import load_data
 
 
 def build_click_row(click: Click, today: date) -> dict:
@@ -21,7 +20,7 @@ def build_click_row(click: Click, today: date) -> dict:
 
 def clicks(request: HttpRequest) -> HttpResponse:
     """Страница /clicks/: список переходов из data/clicks.json."""
-    _, _, clicks_list = load_all(settings.DATA_DIR)
+    _, _, clicks_list = load_data()
     today = date.today()
 
     context = {
@@ -32,7 +31,7 @@ def clicks(request: HttpRequest) -> HttpResponse:
 
 def click_detail(request: HttpRequest, click_id: int) -> HttpResponse:
     """Страница /clicks/<int:click_id>/: карточка одного перехода."""
-    _, _, clicks_list = load_all(settings.DATA_DIR)
+    _, _, clicks_list = load_data()
     click = find_click_by_id(clicks_list, click_id)
 
     row = None
