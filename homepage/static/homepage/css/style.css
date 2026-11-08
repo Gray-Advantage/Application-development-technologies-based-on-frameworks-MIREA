@@ -1,5 +1,3 @@
-/* Собственные стили проекта: оформление поверх Bootstrap. */
-
 .service-logo {
     width: 96px;
     height: auto;
@@ -12,7 +10,7 @@
 }
 
 .link-card {
-    border-left: 4px solid #0d6efd;
+    border-left: 4px solid #fd0d0d;
 }
 
 .link-status {
