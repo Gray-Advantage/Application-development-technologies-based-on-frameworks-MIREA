@@ -14,6 +14,13 @@
 {% for item in by_owner %}<p>{{ item.label }}: {{ item.total }}</p>{% endfor %}
 <h2>Последние пять переходов</h2>
 {% for item in recent %}<a href="{% url 'clicks:detail' item.id %}">№{{ item.id }}</a> {% endfor %}
+<h2>Дополнительные выборки ORM</h2>
+<p>Отключённые: {% for link in disabled %}{{ link.code }} {% empty %}нет{% endfor %}.</p>
+<p>Срок ещё не истёк: {% for link in unexpired %}{{ link.code }} {% empty %}нет{% endfor %}.</p>
+<p>Переходов из Telegram: {{ telegram|length }}, на mirea.ru: {{ education|length }}.</p>
+<p>Владельцы: {% for owner in owners %}{{ owner.username }} {% endfor %}.</p>
+<h2>Первые пять переходов со связанными полями</h2>
+{% for item in click_labels %}<p>№{{ item.id }}: {{ item.code }} — {{ item.owner }}</p>{% endfor %}
 <h2>Все источники</h2>
 {% for item in sources %}<span>{{ item.source|default:"не указан" }} </span>{% endfor %}
 {% endblock %}

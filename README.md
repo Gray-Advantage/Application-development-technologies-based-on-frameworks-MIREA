@@ -493,10 +493,12 @@ python manage.py check
 - именованные URL с пространствами имён приложений;
 - собственные статические файлы: CSS, JavaScript и логотип.
 
-В ПР7 веб-часть получает данные из SQLite через sqlite3. JSON сохранён как
-источник импорта и хранилище консольной версии. Django ORM пока не используется.
+В ПР9 веб-часть получает данные через Django ORM из `db.sqlite3`.
+JSON сохранён как источник ПР7 и хранилище консольной версии.
 
 ## ПР7 — SQLite и SQL
+
+Этот раздел описывает предыдущий этап (тег `pr7`).
 
 `python -m db.import_json` создаёт `data/shortener.sqlite` и переносит JSON
 в одной транзакции: 3 пользователя, 5 ссылок, 24 перехода. Повторный запуск
@@ -514,8 +516,54 @@ HAVING и LIMIT/OFFSET. Все используются веб-частью.
 
 Планируется:
 
-- перенос сущностей в Django ORM и подключение базы данных;
 - формы создания и изменения данных;
 - регистрация, аутентификация и разграничение доступа;
 - разработка REST API;
 - контейнеризация приложения и настройка CI/CD.
+
+## ПР9 — модели и Django ORM
+
+Первый запуск после установки зависимостей:
+
+```bash
+python manage.py migrate
+python manage.py import_legacy
+python manage.py runserver
+```
+
+Исходная база ПР7 `data/shortener.sqlite` остаётся источником, целевая
+база Django — `db.sqlite3` из DATABASES. Команда import_legacy читает
+исходник в режиме read-only и создаёт `data/shortener_backup.sqlite`.
+Все вставки выполняются в одной atomic-транзакции: сначала User, потом
+Link, затем Click. Ключи сохраняются, повторный запуск не дублирует записи,
+при несовпадении существующих полей команда прекращает импорт с откатом.
+Локальная база Django и резервная копия исключены из Git.
+
+Модели: `users.User` (username, email, registered_at), `links.Link`
+(code как PK, url, owner, created_at, expires_at, is_active), `clicks.Click`
+(id, link, clicked_at, nullable source). Владелец имеет много ссылок,
+ссылка — много переходов; related_name: links/clicks. PROTECT запрещает
+удалять родителя с историей; отключение ссылки сохраняет переходы.
+users.User — сущность предметной области, не модель входа Django auth.
+
+Миграции хранятся в приложениях. `makemigrations` создаёт их,
+`migrate` применяет, `showmigrations` показывает состояние,
+`makemigrations --check` обнаруживает незаписанные изменения моделей.
+
+В `links/queries.py` реализованы 17 самостоятельных ORM-выражений;
+ещё три находятся в представлениях. Все используются в страницах:
+выборки, поиск по нескольким полям, связи, exclude, values, Count,
+aggregate/annotate/F, группировки и срез. `/clicks/` поддерживает
+date, owner, code, q, active, sort, page; сортировка использует белый
+список, пагинация выводит по 5 записей и сохраняет GET-параметры.
+`/links/available/` ищет ссылки на дату, `/links/statistics/` показывает
+статистику. В development доступна панель Django Debug Toolbar → SQL.
+
+`python manage.py demo_orm` демонстрирует CRUD на тестовых записях
+с откатом. Выгрузка: `python manage.py dumpdata users links clicks --indent 2`;
+загрузка совместимого fixture: `python manage.py loaddata <файл>`.
+
+Проверки: `pytest -v`, `python manage.py check`, `python manage.py
+makemigrations --check`, `flake8`, `ruff check`, `mypy`, `black --check .`.
+Карта всех 30 показателей и 31 требования: [ПР9](docs/demo-pr9.md).
+Для защиты ПР7 переключиться на тег `pr7`; ПР9 — `pr9`.

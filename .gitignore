@@ -13,6 +13,7 @@ __pycache__/
 
 # База данных разработки Django
 db.sqlite3
+data/*_backup.sqlite
 
 # Настройки IDE
 .idea/

@@ -1,68 +1,57 @@
-"""Представления страниц коротких ссылок."""
+"""Страницы ссылок через Django ORM."""
 
 from datetime import date
 
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
-from models.clicks import count_clicks_by, get_clicks_per_day, is_popular
-from models.links import Link, find_link_by_code
-from db.repository import load_data, select, statistics
+from models.clicks import POPULAR_CLICKS, get_clicks_per_day
+from .models import Link
+from .queries import available_links, link_list, statistics
 
 
-def build_link_card(link: Link, clicks_count: int, today: date) -> dict:
-    """Подготовить данные ссылки для шаблона карточки.
-
-    Предметная логика остаётся в Python: методы объекта вызываются здесь,
-    а шаблон только выводит готовые значения.
-    """
+def build_link_card(link: Link, today: date) -> dict:
+    """Сохранить контекст карточки ПР6."""
+    count = link.clicks_count
+    per_day = get_clicks_per_day(count, link.days_passed(today))
     return {
         "link": link,
-        "clicks": clicks_count,
+        "clicks": count,
         "state": link.get_state(today),
         "available": link.is_available(today),
         "days_left": max(link.days_left(today), 0),
-        "per_day": get_clicks_per_day(clicks_count, link.days_passed(today)),
-        "popular": is_popular(link, clicks_count, today),
+        "per_day": per_day,
+        "popular": count >= POPULAR_CLICKS and link.is_available(today),
     }
 
 
 def links(request: HttpRequest) -> HttpResponse:
-    """Страница /links/: список ссылок из data/links.json."""
-    _, links_list, clicks_list = load_data()
-    today = date.today()
-    counts = count_clicks_by(clicks_list, "link")
-
-    context = {
-        "cards": [
-            build_link_card(link, counts.get(link, 0), today)
-            for link in links_list
-        ],
-    }
-    return render(request, "links/link_list.html", context)
+    """Q01: список ссылок с владельцем и числом переходов."""
+    return render(
+        request,
+        "links/link_list.html",
+        {
+            "cards": [
+                build_link_card(link, date.today()) for link in link_list()
+            ],
+        },
+    )
 
 
 def link_detail(request: HttpRequest, code: str) -> HttpResponse:
-    """Страница /links/<slug:code>/: карточка ссылки и её статистика."""
-    _, links_list, clicks_list = load_data()
-    link = find_link_by_code(links_list, code)
-
-    card = None
-    if link is not None:
-        counts = count_clicks_by(clicks_list, "link")
-        card = build_link_card(link, counts.get(link, 0), date.today())
-
-    context = {"card": card}
+    """Q18: отдельный объект или 404."""
+    link = get_object_or_404(link_list(), code=code)
     return render(
         request,
         "links/link_detail.html",
-        context,
-        status=404 if link is None else 200,
+        {
+            "card": build_link_card(link, date.today()),
+        },
     )
 
 
 def available(request: HttpRequest) -> HttpResponse:
-    """Поиск ссылок, доступных в выбранный день, по коду или URL."""
+    """Q02: доступные на дату ссылки с поиском по коду или URL."""
     value = request.GET.get("date", date.today().isoformat())
     error = ""
     try:
@@ -71,24 +60,18 @@ def available(request: HttpRequest) -> HttpResponse:
         day = date.today()
         error = "Некорректная дата. Используйте ГГГГ-ММ-ДД."
     query = request.GET.get("q", "").strip()
-    available_codes = {
-        row["code"] for row in select("available", {"date": day.isoformat()})
-    }
-    found_codes = {
-        row["code"] for row in select("search", {"query": f"%{query}%"})
-    }
-    _, links_list, clicks_list = load_data()
-    counts = count_clicks_by(clicks_list, "link")
-    cards = [
-        build_link_card(link, counts.get(link, 0), day)
-        for link in links_list
-        if link.code in available_codes & found_codes
-    ]
+    cards = (
+        []
+        if error
+        else [
+            build_link_card(link, day) for link in available_links(day, query)
+        ]
+    )
     return render(
         request,
         "links/available.html",
         {
-            "cards": [] if error else cards,
+            "cards": cards,
             "date": value,
             "q": query,
             "error": error,
@@ -97,5 +80,5 @@ def available(request: HttpRequest) -> HttpResponse:
 
 
 def stats(request: HttpRequest) -> HttpResponse:
-    """Статистика SQL: агрегаты, группировки и ссылки без переходов."""
+    """Q04–Q17: сводки и связанные данные."""
     return render(request, "links/statistics.html", statistics())

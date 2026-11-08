@@ -25,3 +25,7 @@ ignore_missing_imports = true
 
 [tool.black]
 line-length = 79
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "shortener.settings"
+python_files = ["test_*.py", "tests.py"]
