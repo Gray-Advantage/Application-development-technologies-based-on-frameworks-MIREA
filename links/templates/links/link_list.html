@@ -4,6 +4,9 @@
 
 {% block content %}
     <h1>Короткие ссылки</h1>
+    {% if perms.links.add_link %}
+        <a class="btn btn-primary mb-3" href="{% url 'links:create' %}">Создать ссылку</a>
+    {% endif %}
 
     <p>Всего ссылок: {{ cards|length }}</p>
 

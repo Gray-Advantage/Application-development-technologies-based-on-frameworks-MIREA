@@ -7,3 +7,4 @@ flake8>=7.0
 flake8-quotes>=3.4
 ruff>=0.16
 mypy>=2.3
+Pillow>=12,<14

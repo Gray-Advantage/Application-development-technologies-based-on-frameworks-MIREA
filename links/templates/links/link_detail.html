@@ -18,6 +18,10 @@
                     {% include "links/includes/link_status.html" with state=card.state available=card.available %}
                 </h1>
 
+                {% if card.link.preview %}
+                    <img class="img-thumbnail mb-3" width="320" src="{{ card.link.preview.url }}" alt="Изображение ссылки">
+                {% endif %}
+
                 <p class="card-text">
                     <strong>Исходный адрес:</strong>
                     <a href="{{ card.link.url }}">{{ card.link.url }}</a>
@@ -54,6 +58,15 @@
                         </span>
                     {% endif %}
                 </p>
+                {% if perms.links.change_link and card.link.is_active %}
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-outline-primary" href="{% url 'links:edit' card.link.code %}">Редактировать</a>
+                        <form method="post" action="{% url 'links:disable' card.link.code %}">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-danger" type="submit">Отключить</button>
+                        </form>
+                    </div>
+                {% endif %}
             </div>
         </div>
     {% else %}

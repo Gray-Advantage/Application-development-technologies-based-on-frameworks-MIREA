@@ -7,27 +7,10 @@
 
     <p>Всего переходов: {{ page_obj.paginator.count }}</p>
     <form method="get" class="mb-3 d-flex flex-wrap align-items-end gap-2">
-        <label>Дата <input type="date" name="date" value="{{ filters.date }}"></label>
-        <label>Поиск <input name="q" value="{{ filters.q }}"></label>
-        <label>Владелец <select name="owner">
-            <option value="">Все</option>
-            {% for owner in owners %}<option value="{{ owner.pk }}" {% if filters.owner == owner.pk|stringformat:"s" %}selected{% endif %}>{{ owner.username }}</option>{% endfor %}
-        </select></label>
-        <label>Ссылка <select name="code">
-            <option value="">Все</option>
-            {% for link in links %}<option value="{{ link.code }}" {% if filters.code == link.code %}selected{% endif %}>{{ link.code }}</option>{% endfor %}
-        </select></label>
-        <label>Порядок <select name="sort">
-            <option value="date" {% if filters.sort == "date" %}selected{% endif %}>По дате</option>
-            <option value="-date" {% if filters.sort == "-date" %}selected{% endif %}>Сначала новые</option>
-            <option value="code" {% if filters.sort == "code" %}selected{% endif %}>По ссылке</option>
-            <option value="owner" {% if filters.sort == "owner" %}selected{% endif %}>По владельцу</option>
-        </select></label>
-        <label><input type="checkbox" name="active" value="1" {% if filters.active == "1" %}checked{% endif %}>Только включённые ссылки</label>
+        {% include "includes/form_fields.html" %}
         <button class="btn btn-primary">Применить</button>
         <a href="{% url 'clicks:list' %}">Сбросить</a>
     </form>
-    {% if error %}<p class="text-danger">{{ error }}</p>{% endif %}
 
     <ul class="list-group">
         {% for row in rows %}

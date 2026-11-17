@@ -2,10 +2,15 @@
 
 from datetime import date
 
+from django.contrib.auth.decorators import login_required, permission_required
+from django.db import IntegrityError, transaction
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods, require_POST
 
 from models.clicks import POPULAR_CLICKS, get_clicks_per_day
+from .forms import AvailabilityForm, LinkForm
 from .models import Link
 from .queries import available_links, link_list, statistics
 
@@ -52,31 +57,89 @@ def link_detail(request: HttpRequest, code: str) -> HttpResponse:
 
 def available(request: HttpRequest) -> HttpResponse:
     """Q02: доступные на дату ссылки с поиском по коду или URL."""
-    value = request.GET.get("date", date.today().isoformat())
-    error = ""
-    try:
-        day = date.fromisoformat(value)
-    except ValueError:
-        day = date.today()
-        error = "Некорректная дата. Используйте ГГГГ-ММ-ДД."
-    query = request.GET.get("q", "").strip()
-    cards = (
-        []
-        if error
-        else [
+    form = AvailabilityForm(
+        request.GET or None, initial={"date": date.today()}
+    )
+    cards = []
+    if not form.is_bound or form.is_valid():
+        day = form.cleaned_data.get("date") if form.is_bound else None
+        day = day or date.today()
+        query = form.cleaned_data.get("q", "") if form.is_bound else ""
+        cards = [
             build_link_card(link, day) for link in available_links(day, query)
         ]
-    )
     return render(
         request,
         "links/available.html",
+        {"cards": cards, "form": form},
+    )
+
+
+@login_required(login_url="admin:login")
+@permission_required("links.add_link", raise_exception=True)
+@require_http_methods(["GET", "HEAD", "POST"])
+def link_create(request: HttpRequest) -> HttpResponse:
+    form = (
+        LinkForm(request.POST, request.FILES)
+        if request.method == "POST"
+        else LinkForm()
+    )
+    if form.is_valid():
+        link = form.save(commit=False)
+        try:
+            with transaction.atomic():
+                link.save(force_insert=True)
+        except IntegrityError:
+            if not Link.objects.filter(pk=link.pk).exists():
+                raise
+            if link.preview:
+                link.preview.delete(save=False)
+            form.add_error("code", "Ссылка с таким кодом уже существует.")
+        else:
+            return redirect(link)
+    return render(
+        request,
+        "links/link_form.html",
         {
-            "cards": cards,
-            "date": value,
-            "q": query,
-            "error": error,
+            "form": form,
+            "title": "Создать ссылку",
+            "cancel_url": reverse("links:list"),
         },
     )
+
+
+@login_required(login_url="admin:login")
+@permission_required("links.change_link", raise_exception=True)
+@require_http_methods(["GET", "HEAD", "POST"])
+def link_edit(request: HttpRequest, code: str) -> HttpResponse:
+    link = get_object_or_404(Link.objects.enabled(), pk=code)
+    form = (
+        LinkForm(request.POST, request.FILES, instance=link)
+        if request.method == "POST"
+        else LinkForm(instance=link)
+    )
+    if form.is_valid():
+        link = form.save(commit=False)
+        link.save(update_fields=["url", "expires_at", "preview"])
+        return redirect(link)
+    return render(
+        request,
+        "links/link_form.html",
+        {
+            "form": form,
+            "title": "Редактировать ссылку",
+            "cancel_url": link.get_absolute_url(),
+        },
+    )
+
+
+@require_POST
+@login_required(login_url="admin:login")
+@permission_required("links.change_link", raise_exception=True)
+def link_disable(request: HttpRequest, code: str) -> HttpResponse:
+    link = get_object_or_404(Link.objects.enabled(), pk=code)
+    link.deactivate()
+    return redirect(link)
 
 
 def stats(request: HttpRequest) -> HttpResponse:

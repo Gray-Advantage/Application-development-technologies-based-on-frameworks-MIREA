@@ -39,6 +39,10 @@ class Link(models.Model):
         "Статус", max_length=8, choices=Status.choices, default=Status.ENABLED
     )
 
+    preview = models.ImageField(
+        "Изображение ссылки", upload_to="link_previews/", blank=True
+    )
+
     objects = LinkQuerySet.as_manager()
 
     class Meta:

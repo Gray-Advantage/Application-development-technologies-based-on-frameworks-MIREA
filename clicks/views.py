@@ -6,9 +6,8 @@ from django.core.paginator import Paginator
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 
-from links.models import Link
 from links.queries import click_list
-from users.models import User
+from .forms import ClickFilterForm
 from .models import Click
 
 
@@ -23,21 +22,12 @@ def build_click_row(click: Click, today: date) -> dict:
 
 def clicks(request: HttpRequest) -> HttpResponse:
     """Q03/Q19: фильтры → сортировка → пагинация."""
-    params = request.GET.dict()
-    errors = []
-    if params.get("date"):
-        try:
-            date.fromisoformat(params["date"])
-        except ValueError:
-            errors.append("Некорректная дата. Используйте ГГГГ-ММ-ДД.")
-    if params.get("owner"):
-        try:
-            owner = int(params["owner"])
-            if not 0 < owner <= 9223372036854775807:
-                raise ValueError
-        except ValueError:
-            errors.append("Некорректный идентификатор владельца.")
-    result = Click.objects.none() if errors else click_list(params)
+    form = ClickFilterForm(request.GET)
+    result = (
+        click_list(form.query_params())
+        if form.is_valid()
+        else Click.objects.none()
+    )
     page = Paginator(result, 5).get_page(request.GET.get("page"))
     return render(
         request,
@@ -45,10 +35,7 @@ def clicks(request: HttpRequest) -> HttpResponse:
         {
             "rows": [build_click_row(click, date.today()) for click in page],
             "page_obj": page,
-            "error": " ".join(errors),
-            "filters": params,
-            "owners": User.objects.order_by("username"),
-            "links": Link.objects.order_by("code"),
+            "form": form,
         },
     )
 

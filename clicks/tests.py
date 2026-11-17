@@ -107,7 +107,7 @@ class ProjectTests(TestCase):
         ):
             response = self.client.get("/clicks/", params)
             self.assertEqual(response.status_code, 200)
-            self.assertTrue(response.context["error"])
+            self.assertTrue(response.context["form"].errors)
             self.assertEqual(response.context["rows"], [])
         response = self.client.get("/clicks/", {"q": "zzzz"})
         self.assertContains(response, "Переходы не найдены")

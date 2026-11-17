@@ -22,3 +22,6 @@ data/*_backup.sqlite
 # Служебные файлы ОС
 .DS_Store
 Thumbs.db
+
+# Изображения, загруженные через Django Forms
+/media/
