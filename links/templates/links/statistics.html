@@ -2,7 +2,10 @@
 {% block title %}Статистика сервиса{% endblock %}
 {% block content %}
 <h1>Статистика</h1>
-{% for item in totals %}<p>Ссылок: {{ item.total }}, включено: {{ item.active }}</p>{% endfor %}
+{% for item in totals %}
+<p>Ссылок: {{ item.total }}. Включено: {{ item.active }}, отключено: {{ item.disabled }}.</p>
+<p>Доступно сегодня: {{ item.available }}. Истёкших среди включённых: {{ item.expired }}.</p>
+{% endfor %}
 {% for item in click_totals %}<p>Переходов: {{ item.total }}. Первый: {{ item.first_date|default:"—" }}, последний: {{ item.last_date|default:"—" }}</p>{% endfor %}
 <h2>Переходы по ссылкам</h2>
 {% for item in by_link %}<p>{{ item.label }}: {{ item.total }}</p>{% empty %}<p>Данных нет.</p>{% endfor %}

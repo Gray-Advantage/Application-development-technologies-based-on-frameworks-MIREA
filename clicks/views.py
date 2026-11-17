@@ -55,9 +55,7 @@ def clicks(request: HttpRequest) -> HttpResponse:
 
 def click_detail(request: HttpRequest, click_id: int) -> HttpResponse:
     """Q20: переход со ссылкой и владельцем одним SQL-запросом."""
-    click = get_object_or_404(
-        Click.objects.select_related("link__owner"), pk=click_id
-    )
+    click = get_object_or_404(Click.objects.with_link(), pk=click_id)
     return render(
         request,
         "clicks/click_detail.html",

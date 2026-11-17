@@ -59,7 +59,11 @@ class Command(BaseCommand):
                             "owner_id": row["owner_id"],
                             "created_at": row["created_at"],
                             "expires_at": row["expires_at"],
-                            "is_active": bool(row["is_active"]),
+                            "status": (
+                                Link.Status.ENABLED
+                                if row["is_active"]
+                                else Link.Status.DISABLED
+                            ),
                         },
                     )
                 for row in records["clicks"]:

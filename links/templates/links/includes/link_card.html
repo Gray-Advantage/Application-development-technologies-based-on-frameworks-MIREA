@@ -1,7 +1,7 @@
 <article class="card link-card mb-3">
     <div class="card-body">
         <h2 class="card-title h5">
-            <a href="{% url 'links:detail' card.link.code %}">
+            <a href="{{ card.link.get_absolute_url }}">
                 {{ card.link.short_url }}
             </a>
 

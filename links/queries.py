@@ -10,10 +10,11 @@ from users.models import User
 from .models import Link
 
 
-def link_list() -> QuerySet:
+def link_list(base: QuerySet | None = None) -> QuerySet:
     """Q01: список, связь и число переходов без N+1."""
     return (
-        Link.objects.select_related("owner")
+        (Link.objects.all() if base is None else base)
+        .select_related("owner")
         .annotate(clicks_count=Count("clicks"))
         .order_by("created_at", "code")
     )
@@ -21,16 +22,14 @@ def link_list() -> QuerySet:
 
 def available_links(day: date, query: str) -> QuerySet:
     """Q02: несколько условий и поиск по двум полям."""
-    return (
-        link_list()
-        .filter(is_active=True, created_at__lte=day, expires_at__gt=day)
-        .filter(Q(code__icontains=query) | Q(url__icontains=query))
+    return link_list(Link.objects.available_on(day)).filter(
+        Q(code__icontains=query) | Q(url__icontains=query)
     )
 
 
 def click_list(params: dict) -> QuerySet:
     """Q03: фильтры, поиск по связям и безопасная сортировка."""
-    result = Click.objects.select_related("link__owner")
+    result = Click.objects.with_link()
     if params.get("date"):
         result = result.filter(clicked_at=params["date"])
     if params.get("owner"):
@@ -44,7 +43,7 @@ def click_list(params: dict) -> QuerySet:
             | Q(link__owner__username__icontains=params["q"])
         )
     if params.get("active") == "1":
-        result = result.exclude(link__is_active=False)
+        result = result.exclude(link__status=Link.Status.DISABLED)
     fields = {
         "date": "clicked_at",
         "-date": "-clicked_at",
@@ -56,13 +55,23 @@ def click_list(params: dict) -> QuerySet:
     )
 
 
-def statistics() -> dict:
+def statistics(day: date | None = None) -> dict:
     """Q04–Q17 — самостоятельные используемые выборки и сводки."""
+    day = date.today() if day is None else day
+    enabled = Q(status=Link.Status.ENABLED)
     return {
         # Q04: условная сводная агрегация.
         "totals": [
             Link.objects.aggregate(
-                total=Count("pk"), active=Count("pk", filter=Q(is_active=True))
+                total=Count("pk"),
+                active=Count("pk", filter=enabled),
+                disabled=Count("pk", filter=Q(status=Link.Status.DISABLED)),
+                expired=Count("pk", filter=enabled & Q(expires_at__lte=day)),
+                available=Count(
+                    "pk",
+                    filter=enabled
+                    & Q(created_at__lte=day, expires_at__gt=day),
+                ),
             )
         ],
         # Q05: агрегаты дат.
@@ -99,11 +108,13 @@ def statistics() -> dict:
         .values("source")
         .distinct(),
         # Q12: один фильтр.
-        "disabled": Link.objects.filter(is_active=False).order_by("code"),
+        "disabled": Link.objects.filter(status=Link.Status.DISABLED).order_by(
+            "code"
+        ),
         # Q13: исключение истёкших.
-        "unexpired": Link.objects.exclude(
-            expires_at__lte=date.today()
-        ).order_by("code"),
+        "unexpired": Link.objects.exclude(expires_at__lte=day).order_by(
+            "code"
+        ),
         # Q14: поиск по одному строковому полю.
         "telegram": Click.objects.filter(source__icontains="telegram"),
         # Q15: отдельная фильтрация по связанному полю.
