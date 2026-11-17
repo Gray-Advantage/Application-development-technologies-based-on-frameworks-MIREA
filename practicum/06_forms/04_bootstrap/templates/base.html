@@ -1,0 +1,42 @@
+{% load django_bootstrap5 %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static 'img/fav/fav.png' %}" type="image">
+    <title>
+      {% block title %}{% endblock %}
+    </title>
+    {% bootstrap_css %}
+  </head>
+  <body>
+    {% include "includes/header.html" %}
+    <main class="pt-5 my-5">
+      <div class="container">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+    {% include "includes/footer.html" %}
+  </body>
+  <script src="{% static 'js/jquery-3.2.1.slim.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+</html>
+{% comment %}
+<!--
+Подключите Bootstrap к проекту «Анфиса» с помощью библиотеки
+`django-bootstrap5`.
+
+В шаблоне `templates/contest/form.html` поместите форму в тег `<div>` с классом
+`card` и шириной в 4/12 от ширины родительского тега. Добавьте заголовок для
+«карточки» с надписью «Конкурс мороженого».
+
+Внешний вид формы должен получиться такой:
+
+![](https://pictures.s3.yandex.net:443/resources/152_1682598183.png)
+
+Измените код в файле *base.html*: сейчас стили Bootstrap подключены через тег
+`<link>` — замените его на тег библиотеки `django-bootstrap5`.
+-->
+{% endcomment %}

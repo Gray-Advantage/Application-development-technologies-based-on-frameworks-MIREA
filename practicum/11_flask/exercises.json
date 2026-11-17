@@ -1,0 +1,615 @@
+[
+  {
+    "id": "9668aa11-4173-410d-8607-347181d736f6",
+    "name": "Свободная касса",
+    "blocks": [
+      {
+        "id": "571a0550-28e4-4c24-8fd7-46eb5c11ddd1",
+        "content": "Перетащите карточки с утверждениями в соответствующие колонки.",
+        "kind": "QuizCards",
+        "node_id": "d4ffb1b8-e3ca-46b5-a1fc-59739ebbe736",
+        "options": [
+          {
+            "id": "6d77a42a-e51e-496b-a950-3bc3bc8b90e2",
+            "content": "Сначала читает исходный код целиком и только потом его выполняет"
+          },
+          {
+            "id": "84767251-ea5d-4d07-8734-9fe8483db565",
+            "content": "Переводит весь исходный код в машинный до начала выполнения программы"
+          },
+          {
+            "id": "565381e3-9003-45db-ae7c-65d71bcdb03f",
+            "content": "Переводит исходный код в машинный во время выполнения программы"
+          },
+          {
+            "id": "71dfcdf5-f431-4b48-9df6-3e42a58f9d0a",
+            "content": "Создаёт исполняемый файл"
+          },
+          {
+            "id": "dd025063-d9de-4c91-b31e-3323c1e55b27",
+            "content": "Инструкция за инструкцией выполняет исходный код"
+          }
+        ],
+        "sections": [
+          {
+            "id": "42d2fa2f-c6eb-4ad3-a1fe-8639b53f66df",
+            "content": "Компилятор"
+          },
+          {
+            "id": "ace4730a-5c35-4d08-951e-06aec4b5392f",
+            "content": "Интерпретатор"
+          }
+        ],
+        "answer": {
+          "6d77a42a-e51e-496b-a950-3bc3bc8b90e2": "42d2fa2f-c6eb-4ad3-a1fe-8639b53f66df",
+          "84767251-ea5d-4d07-8734-9fe8483db565": "42d2fa2f-c6eb-4ad3-a1fe-8639b53f66df",
+          "565381e3-9003-45db-ae7c-65d71bcdb03f": "ace4730a-5c35-4d08-951e-06aec4b5392f",
+          "71dfcdf5-f431-4b48-9df6-3e42a58f9d0a": "42d2fa2f-c6eb-4ad3-a1fe-8639b53f66df",
+          "dd025063-d9de-4c91-b31e-3323c1e55b27": "ace4730a-5c35-4d08-951e-06aec4b5392f"
+        },
+        "explanation": "В учебной модели компиляция переводит программу до её запуска и может дать исполняемый файл, а интерпретатор выполняет инструкции по ходу работы. Карточка «Сначала читает исходный код целиком и только потом его выполняет» сформулирована неточно: после компиляции код выполняет среда исполнения. Относим её к компилятору, поскольку в карточке описана предварительная обработка всей программы. На практике компиляция и интерпретация могут сочетаться.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "2af64176-05cd-4651-9d99-0004fdeb0476",
+    "name": "Потоки и процессы в Python",
+    "blocks": [
+      {
+        "id": "441630f5-5de5-4e81-a89d-8f30b1de0784",
+        "type": "radio",
+        "content": "Какой метод экземпляра класса `Thread` нужно использовать, чтобы основной поток дождался завершения дочернего?",
+        "kind": "QuizSelect",
+        "node_id": "d0b50125-5607-4f25-84eb-4e5dbeaac81e",
+        "options": [
+          {
+            "id": "c923ecde-c18a-4647-830a-7e061a612cf6",
+            "content": "`wait()`"
+          },
+          {
+            "id": "d6dd5615-ef40-4178-bde3-8e8a04ee9772",
+            "content": "`sleep()`"
+          },
+          {
+            "id": "259d84c7-1697-48b6-bbfd-26d819cc4eee",
+            "content": "`join()`"
+          },
+          {
+            "id": "b79cdece-ba75-46ab-9c9a-050d0a822398",
+            "content": "`terminate()`"
+          }
+        ],
+        "answer": [
+          "259d84c7-1697-48b6-bbfd-26d819cc4eee"
+        ],
+        "explanation": "Вызов join() у запущенного дочернего потока блокирует вызвавший поток до завершения дочернего, если таймаут не задан.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "4efa585e-c9a2-434b-bead-7c94476d67fd",
+    "name": "Эксперименты с потоками и процессами",
+    "blocks": [
+      {
+        "id": "ad47f8db-7417-404c-b5b8-513e1b5cd232",
+        "type": "radio",
+        "content": "Какой модуль подойдёт для решения этой задачи?",
+        "kind": "QuizSelect",
+        "node_id": "5644ac8a-a452-4492-b0c6-779d557415c8",
+        "options": [
+          {
+            "id": "b92ac1af-e009-4921-a106-25b637476361",
+            "content": "threading"
+          },
+          {
+            "id": "0580fa88-2f2b-428c-8252-01e608698113",
+            "content": "multiprocessing"
+          }
+        ],
+        "answer": [
+          "0580fa88-2f2b-428c-8252-01e608698113"
+        ],
+        "explanation": "Фраза «эта задача» не раскрыта в выгрузке. В условии непосредственно перед вопросом в уроке нужно одновременно запустить два Bogosort. Это вычислительная нагрузка на чистом Python. multiprocessing запускает сортировки в разных процессах, которые могут работать параллельно на разных ядрах в обычном CPython с GIL. Для задачи с преобладанием ожидания ввода-вывода выбор мог бы быть другим.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "8227ad2b-5e3e-4158-aa45-c73aaa5aafee",
+    "name": "Асинхронный Python, модуль asyncio",
+    "blocks": [
+      {
+        "id": "4e4933cc-28d1-4b13-9d6a-d4252fc0296c",
+        "type": "radio",
+        "content": "Какой модуль лучше использовать в программе с GET-запросами?",
+        "kind": "QuizSelect",
+        "node_id": "786baf77-61ea-457b-bc3e-f9dbe0f01396",
+        "options": [
+          {
+            "id": "11df8e35-8dd1-4014-8a96-84e47b4633d2",
+            "content": "threading"
+          },
+          {
+            "id": "31149920-4002-4393-a0dc-017dba3bc4be",
+            "content": "multiprocessing"
+          }
+        ],
+        "answer": [
+          "11df8e35-8dd1-4014-8a96-84e47b4633d2"
+        ],
+        "explanation": "Из предложенных вариантов подходит threading: пока один поток ждёт ответ на сетевой GET-запрос, другие могут отправлять запросы и получать ответы.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "d38fb8ca-28e3-487e-b082-8ec9658daea5",
+    "name": "Асинхронная работа с сетевыми запросами: Часть 1-я",
+    "blocks": [
+      {
+        "id": "f1b6f6bc-272a-480a-96d7-d3771af47b7a",
+        "question": "Соотнесите назначение библиотеки с её названием.",
+        "kind": "QuizMacaroni",
+        "node_id": "dd1aa9a2-27cb-4578-9718-1217de2fd49c",
+        "options": {
+          "left": {
+            "choices": [
+              "Взаимодействие с файловой и операционной системами устройства.",
+              "Работа с датой и временем.",
+              "Работа с путями к файлам и папкам.",
+              "Упрощение работы с HTTP-запросами."
+            ]
+          },
+          "right": {
+            "choices": [
+              "os",
+              "pathlib",
+              "datetime",
+              "requests"
+            ]
+          }
+        },
+        "answer": {
+          "Взаимодействие с файловой и операционной системами устройства.": "os",
+          "Работа с датой и временем.": "datetime",
+          "Работа с путями к файлам и папкам.": "pathlib",
+          "Упрощение работы с HTTP-запросами.": "requests"
+        },
+        "explanation": "os даёт интерфейсы к операционной и файловой системам, datetime представляет даты и время, pathlib предоставляет объекты для работы с путями, а requests упрощает отправку HTTP-запросов.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "06b8ab44-6271-4c04-949e-9d0372f23e00",
+    "name": "Асинхронная работа с сетевыми запросами: Часть 2-я",
+    "blocks": [
+      {
+        "id": "61e7b9cb-7d4c-42f0-9495-01b031012800",
+        "type": "radio",
+        "content": "К какому типу задач относится задача получения файлов-картинок?",
+        "kind": "QuizSelect",
+        "node_id": "44477036-ec9a-4da8-9422-22fdd6383623",
+        "options": [
+          {
+            "id": "ddb4cff3-88c8-410b-9084-d43fd14e4b11",
+            "content": "CPU-bound"
+          },
+          {
+            "id": "7398a230-4ee5-4298-bcc7-c94c6f4f2f64",
+            "content": "I/O-bound"
+          }
+        ],
+        "answer": [
+          "7398a230-4ee5-4298-bcc7-c94c6f4f2f64"
+        ],
+        "explanation": "При получении файлов-картинок программа ждёт передачи данных, поэтому это I/O-bound. Декодирование и обработка уже полученных изображений могут быть вычислительной нагрузкой.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "313874ad-381a-4c46-8b3e-68ff3312f482",
+    "name": "Охота на воробьёв",
+    "blocks": [
+      {
+        "id": "306b745b-3bd1-470b-94bb-ff3321ea2671",
+        "type": "checkbox",
+        "content": "Выберите верные утверждения про Flask.",
+        "kind": "QuizSelect",
+        "node_id": "a998369b-9a0c-47dd-9a19-9cf6df4f71eb",
+        "options": [
+          {
+            "id": "4397836b-aa64-4df9-bed4-d86e3b8aa61a",
+            "content": "По умолчанию Flask включает встроенную ORM для работы с базами данных"
+          },
+          {
+            "id": "02fcebae-8273-441c-9d94-cb5d25a15532",
+            "content": "Flask — это микрофреймворк."
+          },
+          {
+            "id": "ec76ffd9-a6ab-41b0-831c-b2bdd074789b",
+            "content": "Flask включает мощную систему аутентификации и авторизации «из коробки»"
+          },
+          {
+            "id": "b8ca39bc-6de6-41bf-a5df-50ff52e06d24",
+            "content": "Flask по умолчанию использует SQLite в качестве базы данных"
+          },
+          {
+            "id": "e8c27ad6-589c-4b90-a426-ce5b93de112c",
+            "content": "Flask поддерживает расширяемость через плагины"
+          }
+        ],
+        "answer": [
+          "02fcebae-8273-441c-9d94-cb5d25a15532",
+          "e8c27ad6-589c-4b90-a426-ce5b93de112c"
+        ],
+        "explanation": "Flask — микрофреймворк, который поддерживает расширения. Выбор хранилища, подключение ORM, аутентификации и авторизации остаются за приложением.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "c6424e8b-ce32-424b-b13f-dee8f43048a1",
+    "name": "Описание моделей и работа с БД",
+    "blocks": [
+      {
+        "id": "08a7d055-a13e-4b1c-a2f0-b87f971bd85c",
+        "question": "Соотнесите методы ORM-запросов и действия, за которые они отвечают.",
+        "kind": "QuizMacaroni",
+        "node_id": "be3f2c6d-a562-4324-92ab-62a0e7c06176",
+        "options": {
+          "left": {
+            "choices": [
+              "create_all()",
+              "drop_all()",
+              "add()",
+              "commit()",
+              "get()",
+              "delete()",
+              "all()",
+              "limit()",
+              "offset()"
+            ]
+          },
+          "right": {
+            "choices": [
+              "Удаляет все таблицы в базе данных",
+              "Создаёт базу данных и таблицы в ней",
+              "Удаляет конкретные данные из таблицы",
+              "Получает все доступные экземпляры класса",
+              "Получает нужный объект из базы данных по ID",
+              "Ограничивает выборку до указанного количества элементов",
+              "Исключает из выборки указанное количество элементов",
+              "Добавляет данные в сессию",
+              "Фиксирует изменения в базе данных"
+            ]
+          }
+        },
+        "answer": {
+          "create_all()": "Создаёт базу данных и таблицы в ней",
+          "drop_all()": "Удаляет все таблицы в базе данных",
+          "add()": "Добавляет данные в сессию",
+          "commit()": "Фиксирует изменения в базе данных",
+          "get()": "Получает нужный объект из базы данных по ID",
+          "delete()": "Удаляет конкретные данные из таблицы",
+          "all()": "Получает все доступные экземпляры класса",
+          "limit()": "Ограничивает выборку до указанного количества элементов",
+          "offset()": "Исключает из выборки указанное количество элементов"
+        },
+        "explanation": "create_all() и drop_all() работают с таблицами, известными по метаданным моделей. Вариант про создание базы и таблиц подходит для учебного примера с SQLite: файл может появиться при подключении, а сам create_all() создаёт отсутствующие таблицы. add() помещает новый объект в сессию, delete() помечает объект на удаление, commit() фиксирует изменения. get() ищет по первичному ключу, all() возвращает все результаты запроса, limit() ограничивает их количество, offset() пропускает указанное число строк с начала выборки. drop_all() удаляет таблицы из метаданных, поэтому формулировка «все таблицы в базе» верна, только если метаданные охватывают всю базу.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "22e859de-a989-4afd-b6c4-c6074d76d3e6",
+    "name": "Шаблонизатор",
+    "blocks": [
+      {
+        "id": "b0784cb9-485e-46c4-9460-2e17251d0a6b",
+        "content": "Соотнесите типы выражений шаблонизатора Jinja2 с подходящим содержанием.",
+        "kind": "QuizChoice",
+        "node_id": "12aa3416-1b24-499b-8803-a77c4aada1ba",
+        "options": [
+          {
+            "id": "1904dea0-7ee7-4ef9-a121-2a579c669d0f",
+            "content": "{% ... %}"
+          },
+          {
+            "id": "52f22f10-937f-49e7-b62d-1728bb6991c4",
+            "content": "\\{\\{ ... \\}\\}"
+          },
+          {
+            "id": "6218639e-cacb-4940-9fbd-46783cf66350",
+            "content": "{# ... #}"
+          }
+        ],
+        "questions": [
+          {
+            "id": "8b143758-a792-4372-80f1-f65fccc5d612",
+            "content": "`opinion.title`"
+          },
+          {
+            "id": "77ff782d-141d-40bf-91ad-0e7df48e4802",
+            "content": "`for user in users`"
+          },
+          {
+            "id": "f673c39d-2bcd-4df5-8107-76068f6f8b79",
+            "content": "Здесь выводится название фильма"
+          },
+          {
+            "id": "90288c06-0221-4773-8879-fa66d0a90fe0",
+            "content": "`if opinion.source ... else ...`"
+          },
+          {
+            "id": "9f56278f-710b-4122-870a-cb238a00be71",
+            "content": "`opinion.id`"
+          },
+          {
+            "id": "57243724-f340-45ff-b443-e5ade4857f8a",
+            "content": "Этот код лучше не удалять; это не баг, это фича"
+          }
+        ],
+        "answer": {
+          "8b143758-a792-4372-80f1-f65fccc5d612": "52f22f10-937f-49e7-b62d-1728bb6991c4",
+          "77ff782d-141d-40bf-91ad-0e7df48e4802": "1904dea0-7ee7-4ef9-a121-2a579c669d0f",
+          "f673c39d-2bcd-4df5-8107-76068f6f8b79": "6218639e-cacb-4940-9fbd-46783cf66350",
+          "90288c06-0221-4773-8879-fa66d0a90fe0": "1904dea0-7ee7-4ef9-a121-2a579c669d0f",
+          "9f56278f-710b-4122-870a-cb238a00be71": "52f22f10-937f-49e7-b62d-1728bb6991c4",
+          "57243724-f340-45ff-b443-e5ade4857f8a": "6218639e-cacb-4940-9fbd-46783cf66350"
+        },
+        "explanation": "Двойные фигурные скобки выводят значения opinion.title и opinion.id. Блоки for и if/else оформляют тегами {% ... %}. Два текстовых пояснения здесь выступают комментариями {# ... #}.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "1f74b759-2669-470f-9563-0010ac4d89d9",
+    "name": "Доработка шаблонов",
+    "blocks": [
+      {
+        "id": "1741240b-8ced-484b-b725-d49aeee3bd47",
+        "type": "radio",
+        "content": "Укажите функцию Flask, которая принимает в качестве аргумента имя view-функции и возвращает URL-адрес для неё.",
+        "kind": "QuizSelect",
+        "node_id": "df607782-f205-4cc6-858e-1274680f332e",
+        "options": [
+          {
+            "id": "afbd1958-6cab-4210-8f3b-01dbc7b7186f",
+            "content": "`url_for()`"
+          },
+          {
+            "id": "424b0d66-56bc-4a33-8c9d-6df5cce83b33",
+            "content": "`get_url()`"
+          },
+          {
+            "id": "382faf94-c3bf-4ee2-920c-29418ccdc258",
+            "content": "`reverse()`"
+          },
+          {
+            "id": "5aa8e9bc-b7a0-4a6a-b0a0-a0dbe32f5cd8",
+            "content": "`for_url()`"
+          },
+          {
+            "id": "bcb732e3-99ba-4fac-9b84-757e514a65eb",
+            "content": "`url_view()`"
+          },
+          {
+            "id": "93b1e0ed-2a3a-45cc-bb2c-1ac8151c7fdd",
+            "content": "`reverse_index()`"
+          }
+        ],
+        "answer": [
+          "afbd1958-6cab-4210-8f3b-01dbc7b7186f"
+        ],
+        "explanation": "url_for() строит URL по имени endpoint. Для обычного маршрута Flask по умолчанию берёт имя view-функции как имя endpoint. Параметры динамического маршрута передаются именованными аргументами.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "1f67471b-9415-49a7-a484-85b92a154b09",
+    "name": "Динамические адреса и конвертеры пути",
+    "blocks": [
+      {
+        "id": "385dd1cb-dd01-4cfc-88ae-b15cbcb1f090",
+        "question": "Подберите пару: конвертер пути — тип ожидаемых данных для описания адреса страницы.",
+        "kind": "QuizMacaroni",
+        "node_id": "18b7ebc1-a1aa-4a85-aa71-8d9c0f712a82",
+        "options": {
+          "left": {
+            "choices": [
+              "`string`",
+              "`int`",
+              "`float`",
+              "`path`",
+              "`uuid`"
+            ]
+          },
+          "right": {
+            "choices": [
+              "200000",
+              "3422b448-2460-4fd2-9183-8000de6f8343",
+              "Татуин",
+              "0.01",
+              "люди/тускены/джавы"
+            ]
+          }
+        },
+        "answer": {
+          "`string`": "Татуин",
+          "`int`": "200000",
+          "`float`": "0.01",
+          "`path`": "люди/тускены/джавы",
+          "`uuid`": "3422b448-2460-4fd2-9183-8000de6f8343"
+        },
+        "explanation": "string соответствует одному текстовому сегменту, int — целому числу, float — дробному числу, path — пути с разделителями /, uuid — идентификатору UUID. Пары показывают наиболее специфичный конвертер для каждого примера: string может принять и строку из цифр, но вернёт её как текст.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "6cf42d90-6880-4de8-a09c-c3864676bbfc",
+    "name": "Формы во Flask",
+    "blocks": [
+      {
+        "id": "f91d63a9-35b4-4d16-acd9-a0cdd5f8bdea",
+        "type": "checkbox",
+        "content": "Что характерно для работы с формами во Flask? Выберите три верных варианта ответа.",
+        "kind": "QuizSelect",
+        "node_id": "ae7573cb-7ade-4ec4-8cd2-d9d5ae424d25",
+        "options": [
+          {
+            "id": "195ecea0-e34b-426c-a4f8-e5b30c75d9c7",
+            "content": "Чтобы работать с формами во Flask, нужно обязательно устанавливать модуль `Flask-WTF`."
+          },
+          {
+            "id": "31f09753-f98b-4e27-9cc7-93f5f3549ab4",
+            "content": "При работе с модулем `Flask-WTF` форму во Flask можно описать обычным Python-классом."
+          },
+          {
+            "id": "d38de4e7-fbce-470d-983d-2a2f79e3e20f",
+            "content": "Все формы должны быть описаны в классе с именем `Flaskform`."
+          },
+          {
+            "id": "e81a13ac-79c1-4d3d-b845-1ea6dc7d442d",
+            "content": "Библиотека `WTforms` содержит предустановленный набор полей и валидаторов необходимых для создания формы."
+          },
+          {
+            "id": "093d9159-8a7f-43ff-a681-8583d0e8c6c4",
+            "content": "Значение ключа `SECRET_KEY` — это строка из случайного набора символов."
+          }
+        ],
+        "answer": [
+          "31f09753-f98b-4e27-9cc7-93f5f3549ab4",
+          "e81a13ac-79c1-4d3d-b845-1ea6dc7d442d",
+          "093d9159-8a7f-43ff-a681-8583d0e8c6c4"
+        ],
+        "explanation": "С Flask-WTF форму описывают Python-классом на базе FlaskForm, а WTForms предоставляет поля и валидаторы. Случайная строка подходит для SECRET_KEY и именно её предлагает урок. Это рекомендация, а не ограничение типа: Flask также принимает ключ в виде bytes. Flask-WTF является дополнительным расширением.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "37687003-81b7-48ac-8362-9cd75e5db44a",
+    "name": "Уведомления через флеш-сообщения",
+    "blocks": [
+      {
+        "id": "7a5e1d89-0df2-4426-8597-b763c18e3bf2",
+        "type": "checkbox",
+        "content": "Выберите верные утверждения про функцию `flash`.",
+        "kind": "QuizSelect",
+        "node_id": "ddfc7b03-9964-42e6-89ae-5d08875bcda0",
+        "options": [
+          {
+            "id": "842034d9-f2f0-4677-b946-1091b79e2083",
+            "content": "Позволяет запоминать произвольные текстовые сообщения в любой момент запроса."
+          },
+          {
+            "id": "d0e68bb2-cb4b-4d07-a8e0-60d9b002e6a6",
+            "content": "Импортируется из расширения для Flask, которое называется `Flaskflash`."
+          },
+          {
+            "id": "359c76eb-6759-4f39-8fd2-e183434aa12a",
+            "content": "Это собственная функция микрофреймворка Flask."
+          },
+          {
+            "id": "6198daf2-f317-4152-b5c0-2fda514a832c",
+            "content": "Flash-сообщения выводятся только в определённом по умолчанию месте шаблона."
+          },
+          {
+            "id": "f5399ce0-0aa9-45e2-80c4-5c8993d97fb7",
+            "content": "Принимает только один аргумент."
+          }
+        ],
+        "answer": [
+          "842034d9-f2f0-4677-b946-1091b79e2083",
+          "359c76eb-6759-4f39-8fd2-e183434aa12a"
+        ],
+        "explanation": "flash() встроена во Flask и сохраняет сообщение в сессии в ходе обработки запроса. get_flashed_messages() извлекает сообщения, которые приложение может вывести в выбранном месте шаблона. У flash() есть необязательный аргумент category.",
+        "platform_saved": true,
+        "platform_passed": null,
+        "matches_quiz_check": true
+      }
+    ]
+  },
+  {
+    "id": "1669bd12-bcbc-40a1-9337-052bf9adc541",
+    "name": "Рефакторинг",
+    "blocks": [
+      {
+        "id": "bfa5140e-1826-4a78-b945-66edec215d77",
+        "node_id": "1205e964-7594-4e4f-b590-57f5b8fa5f23",
+        "kind": "QuizChat",
+        "content": "Разместите формы, модели и представления в подходящих модулях.",
+        "questions": [
+          {
+            "question": "### В каком модуле лучше разместить этот код?\n\n```python\nfrom datetime import datetime\n\nfrom . import db\n\nclass Opinion(db.Model):\n    id = db.Column(db.Integer, primary_key=True)\n    title = db.Column(db.String(128), nullable=False)\n    text = db.Column(db.Text, unique=True, nullable=False)\n    source = db.Column(db.String(256))\n    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)\n    added_by = db.Column(db.String(64))\n```",
+            "options": [
+              "models.py",
+              "error_handlers.py",
+              "settings.py",
+              "forms.py"
+            ],
+            "answer": "models.py"
+          },
+          {
+            "question": "### Какой модуль подходит для этого кода?\n\n```python\nfrom flask_wtf import FlaskForm\nfrom wtforms import StringField, SubmitField, TextAreaField, URLField\nfrom wtforms.validators import DataRequired, Length, Optional\n\nclass OpinionForm(FlaskForm):\n    title = StringField(\n        'Введите название фильма',\n        validators=[DataRequired(message='Обязательное поле'),\n                    Length(1, 128)]\n    )\n    text = TextAreaField(\n        'Напишите мнение', \n        validators=[DataRequired(message='Обязательное поле')]\n    )\n    source = URLField(\n        'Добавьте ссылку на подробный обзор фильма',\n        validators=[Length(1, 256), Optional()]\n    )\n    submit = SubmitField('Добавить')\n```",
+            "options": [
+              "error_handlers.py",
+              "models.py",
+              "forms.py",
+              "views.py"
+            ],
+            "answer": "forms.py"
+          },
+          {
+            "question": "### Выберите подходящий файл для этого кода.\n\n```python\nfrom random import randrange\n\nfrom flask import abort, flash, redirect, render_template, url_for\n\nfrom . import app, db\nfrom .forms import OpinionForm\nfrom .models import Opinion\n\n@app.route('/')\ndef index_view():\n    quantity = Opinion.query.count()\n    if not quantity:\n        abort(500)\n    offset_value = randrange(quantity)\n    opinion = Opinion.query.offset(offset_value).first()\n    return render_template('opinion.html', opinion=opinion)\n    \n\n@app.route('/add', methods=['GET', 'POST'])\ndef add_opinion_view():\n    form = OpinionForm()\n    if form.validate_on_submit():\n        text = form.text.data\n        if Opinion.query.filter_by(text=text).first() is not None:\n            flash('Такое мнение уже было оставлено ранее!')\n            return render_template('add_opinion.html', form=form)\n        opinion = Opinion(\n            title=form.title.data, \n            text=text, \n            source=form.source.data\n        )\n        db.session.add(opinion)\n        db.session.commit()\n        return redirect(url_for('opinion_view', id=opinion.id))\n    return render_template('add_opinion.html', form=form)\n\n@app.route('/opinions/<int:id>')\ndef opinion_view(id):\n    opinion = Opinion.query.get_or_404(id)\n    return render_template('opinion.html', opinion=opinion)\n```",
+            "options": [
+              "settings.py",
+              "forms.py",
+              "views.py",
+              "error_handlers.py"
+            ],
+            "answer": "views.py"
+          }
+        ],
+        "answer": [
+          "models.py",
+          "forms.py",
+          "views.py"
+        ],
+        "explanation": "Поля и валидаторы формы принадлежат forms.py, ORM-модель — models.py, обработчики маршрутов — views.py.",
+        "platform_saved": true,
+        "matches_quiz_check": true
+      }
+    ]
+  }
+]

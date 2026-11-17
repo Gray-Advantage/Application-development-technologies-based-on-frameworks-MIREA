@@ -17,7 +17,8 @@ docstring-quotes = "double"
 [tool.mypy]
 python_version = "3.10"
 files = ["."]
-exclude = ["^venv/", "^\\.venv/"]
+# Independent trainer snippets reuse module names and are not project packages.
+exclude = ["^venv/", "^\\.venv/", "^practicum/"]
 
 [[tool.mypy.overrides]]
 module = ["django.*"]
@@ -29,3 +30,4 @@ line-length = 79
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "shortener.settings"
 python_files = ["test_*.py", "tests.py"]
+addopts = "--ignore=practicum"

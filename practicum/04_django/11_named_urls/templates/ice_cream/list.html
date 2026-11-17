@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+<!--
+Задайте namespace приложений homepage, about и ice_cream равным имени
+приложения через app_name. Имена всех path должны совпадать с именами
+view-функций. В includes/header.html и ice_cream/list.html замените
+комментарии-заглушки ссылками через тег url с namespace и name.
+Тексты: «Главная», «Список мороженого», «О проекте», «Подробнее».
+В ссылку подробностей передавайте id соответствующего мороженого.
+-->
+{% block title %}
+  Анфиса для друзей. Список мороженого
+{% endblock %}
+{% block content %}
+  <h1>Каталог мороженого</h1>
+  <ul>
+    {% for ice_cream in ice_cream_list %}
+      <li>
+        <h3>{{ ice_cream.title }}</h3>
+        <p>{{ ice_cream.description }}</p>
+        <a href="{% url 'ice_cream:ice_cream_detail' ice_cream.id %}">
+          Подробнее
+        </a>
+      </li>
+      {% if not forloop.last %}
+        <hr>
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% endblock %}

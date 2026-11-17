@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% comment %}
+<!--
+Подключите Bootstrap к проекту «Анфиса» с помощью библиотеки
+`django-bootstrap5`.
+
+В шаблоне `templates/contest/form.html` поместите форму в тег `<div>` с классом
+`card` и шириной в 4/12 от ширины родительского тега. Добавьте заголовок для
+«карточки» с надписью «Конкурс мороженого».
+
+Внешний вид формы должен получиться такой:
+
+![](https://pictures.s3.yandex.net:443/resources/152_1682598183.png)
+
+Измените код в файле *base.html*: сейчас стили Bootstrap подключены через тег
+`<link>` — замените его на тег библиотеки `django-bootstrap5`.
+-->
+{% endcomment %}
+{% load django_bootstrap5 %}
+
+{% block title %}
+  Подать заявку на конкурс
+{% endblock %}
+
+{% block content %}
+  <div class="card col-4">
+    <div class="card-header">Конкурс мороженого</div>
+    <div class="card-body">
+      <form method="get">
+        {% bootstrap_form form %}
+        {% bootstrap_button button_type="submit" content="Отправить" %}
+      </form>
+    </div>
+  </div>
+  {% if form.is_valid %}
+    <h2>Рецепт мороженого "{{ request.GET.title }}" принят на конкурс!</h2>
+  {% endif %}
+{% endblock %}

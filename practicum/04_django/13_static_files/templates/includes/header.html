@@ -1,0 +1,23 @@
+{% load static %}
+<header>
+  <img src="{% static 'img/logo.png' %}" height="50" alt="">
+  <nav>
+    <ul>
+      <li>
+        <a href="{% url 'homepage:index' %}">Главная</a>
+      </li>
+      <li>
+        <a href="{% url 'ice_cream:ice_cream_list' %}">Список мороженого</a>
+      </li>
+      <li>
+        <a href="{% url 'about:description' %}">О проекте</a>
+      </li>
+    </ul>
+  </nav>
+</header>
+<!--
+Настройте поиск статики в static_dev на уровне проекта. В базовом шаблоне
+подключите bootstrap.min.css и fav-иконки через тег static. В шаблоне
+includes/header.html подключите img/logo.png. В каждом шаблоне,
+использующем static, загрузите библиотеку static.
+-->

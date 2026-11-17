@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+<!--
+Уберите повторяющуюся разметку четырёх страниц. Создайте templates/base.html
+и templates/includes/header.html, templates/includes/footer.html. Вынесите
+header и footer в отдельные шаблоны и подключите их внутри body базового
+шаблона тегами include. В base.html объявите блок title внутри title
+и блок content для основного содержимого. Шаблоны about/description.html,
+homepage/index.html, ice_cream/detail.html и ice_cream/list.html должны
+расширять base.html и определять собственные блоки title и content.
+-->
+{% block title %}Анфиса для друзей. Список мороженого{% endblock %}
+{% block content %}
+  <h1>Каталог мороженого</h1>
+{% endblock %}
